@@ -23,7 +23,6 @@ class Server {
 	public void start() {
 		room = new Room();
 		room.setName("theall");
-		room.setCapacity(10);
 
 		workThreadManager = new WorkThreadManager(room);
 		

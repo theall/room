@@ -6,6 +6,8 @@ import lan.client.thread.FindHostThread;
 import lan.client.thread.RoomHeadInfo;
 import lan.client.thread.WorkThread;
 import lan.utils.CmdParser;
+import lan.utils.Room;
+import lan.utils.Team.Type;
 
 public class Client {
 
@@ -95,8 +97,17 @@ public class Client {
 					case 3:// show room infor
 						System.out.println(workThread.getRoom().toString());
 						break;
+					case 4:
+						int index = Integer.parseInt(cmd.data);
+						if(index>=0 && index<workThread.getRoom().getCapacity()) {
+							Type type = index<5?Type.BLUE:Type.RED;
+							if(index > 5)
+								index -= 5;
+							workThread.changeTeam(type, index);
+						}
+						break;
 					case 9:// exit room
-						workThread.interrupt();
+						workThread.shutdown();
 						workThread = null;
 						break;
 					default:
@@ -118,7 +129,6 @@ public class Client {
 		System.out.println("1.Set name");
 		System.out.println("2.Scan rooms");
 		System.out.println("3.Join room");
-		System.out.println("4.Exit room");
 		System.out.println("9.exit");
 		System.out.println("###############");
 	}
@@ -129,7 +139,8 @@ public class Client {
 		System.out.println("1.Change team");
 		System.out.println("2.Send message");
 		System.out.println("3.Show room information");
-		System.out.println("9.exit");
+		System.out.println("4.Change team");
+		System.out.println("9.exit room");
 		System.out.println("###############");
 	}
 }

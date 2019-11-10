@@ -12,7 +12,9 @@ import org.omg.CORBA.COMM_FAILURE;
 
 import lan.utils.NetCommand;
 import lan.utils.Player;
+import lan.utils.Position;
 import lan.utils.Room;
+import lan.utils.Team.Type;
 import lan.utils.NetCommand.Code;
 
 public class WorkThread extends Thread {
@@ -41,6 +43,7 @@ public class WorkThread extends Thread {
 				return;
 			}
 			player = new Player((String) command.getData());
+			player.setId(room.createPlayerId());
 			player.setOutputStream(outputStream);
 			room.cmdAdd(player);
 			System.out.println("New player: " + player.getName());
@@ -60,6 +63,14 @@ public class WorkThread extends Thread {
 				switch (command.getCode()) {
 				case MSG: // forward to clients
 					System.out.println(command.getSenderName() + ": " + (String) command.getData());
+					room.groupSend(command);
+					break;
+				case TEAM_CHANGE:
+					Player sender = command.getSender();
+					Position position = (Position)command.getData();
+					room.movePlayer(sender.getId(), position.getType(), position.getIndex());
+					System.out.println(String.format("Player [%s] change team to [%s] position [%d]", sender.getName(),
+							position.getType().toString(), position.getIndex()));
 					room.groupSend(command);
 					break;
 				default:

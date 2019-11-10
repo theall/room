@@ -10,6 +10,7 @@ public class Player implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private int id;
 	private String name;
 	private Team.Type type;
 	transient private ObjectOutputStream outputStream;
@@ -18,16 +19,18 @@ public class Player implements Serializable {
 	public Player(String name) {
 		this.name = name;
 		type = Type.NULL;
+		id = -1;
 	}
 
 	public void reset() {
+		id = -1;
 		name = "";
 		type = Type.NULL;
 		outputStream = null;
 	}
 
 	public boolean isValid() {
-		return !name.isEmpty() && type!=Type.NULL;
+		return !name.isEmpty() && type != Type.NULL;
 	}
 
 	public String getName() {
@@ -61,21 +64,38 @@ public class Player implements Serializable {
 	}
 
 	public boolean equals(Player player) {
-		return name==player.getName() && type==player.getType() && outputStream==player.getOutputStream();
+		return id == player.getId();
 	}
-	
+
 	public void sendCommand(NetCommand command) throws IOException {
 		if (outputStream == null)
 			return;
 
 		outputStream.writeObject(command);
 	}
-	
+
 	public boolean isReady() {
 		return ready;
 	}
 
 	public void setReady(boolean ready) {
 		this.ready = ready;
+	}
+
+	public void close() throws IOException {
+		if (outputStream != null)
+			outputStream.close();
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public String toString() {
+		return String.format("%d-%s", id, name);
 	}
 }

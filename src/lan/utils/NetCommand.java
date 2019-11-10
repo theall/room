@@ -43,7 +43,7 @@ public class NetCommand implements Serializable {
 	public boolean isNull() {
 		return code == Code.NULL;
 	}
-	
+
 	public Player getSender() {
 		return sender;
 	}
@@ -53,6 +53,6 @@ public class NetCommand implements Serializable {
 	}
 
 	public String getSenderName() {
-		return sender!=null?sender.getName():"";
+		return sender != null ? sender.getName() : "";
 	}
 }

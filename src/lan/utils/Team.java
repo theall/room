@@ -10,7 +10,7 @@ public class Team implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	enum Type {
+	public enum Type {
 		NULL, BLUE, RED
 	}
 
@@ -22,7 +22,7 @@ public class Team implements Serializable {
 		this.type = type;
 
 		players = new ArrayList<Player>();
-		for(int i=0;i<MAX_PLAYERS;i++) {
+		for (int i = 0; i < MAX_PLAYERS; i++) {
 			players.add(null);
 		}
 	}
@@ -35,19 +35,36 @@ public class Team implements Serializable {
 		this.type = type;
 	}
 
+	public boolean setPlayer(int index, Player player) {
+		if (index < 0 || index >= players.size())
+			return false;
+		players.set(index, player);
+		return true;
+	}
+
 	public int getSize() {
 		int n = 0;
 		for (Player player : players) {
-			if (player!=null && player.isValid())
+			if (player != null && player.isValid())
 				n++;
 		}
 		return n;
 	}
 
+	public int getCapacity() {
+		return players.size();
+	}
+	
+	public Player getPlayer(int index) {
+		if (index < 0 || index >= players.size())
+			return null;
+		return players.get(index);
+	}
+
 	public ArrayList<Player> getPlayers() {
 		ArrayList<Player> playerList = new ArrayList<Player>();
-		for(Player player : players) {
-			if(player != null)
+		for (Player player : players) {
+			if (player != null)
 				playerList.add(player);
 		}
 		return playerList;
@@ -56,7 +73,7 @@ public class Team implements Serializable {
 	public int available() {
 		int n = 0;
 		for (Player player : players) {
-			if (player==null)
+			if (player == null)
 				n++;
 		}
 		return n;
@@ -66,12 +83,12 @@ public class Team implements Serializable {
 		int index = -1;
 		for (int i = 0; i < MAX_PLAYERS; i++) {
 			Player p = players.get(i);
-			if(p == null) {
+			if (p == null) {
 				index = i;
 				break;
 			}
 		}
-		if(index != -1)
+		if (index != -1)
 			players.set(index, player);
 		return index;
 	}
@@ -80,8 +97,8 @@ public class Team implements Serializable {
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("Team:" + type.toString() + "\n");
 		for (Player player : players) {
-			if (player==null || !player.isValid()) {
-				sBuffer.append("______________________");
+			if (player == null || !player.isValid()) {
+				sBuffer.append("----------------------");
 			} else {
 				sBuffer.append(player.getName());
 			}
@@ -94,12 +111,14 @@ public class Team implements Serializable {
 		return players.contains(player);
 	}
 
-	public boolean remove(Player player) throws IOException {
-		int index = players.indexOf(player);
-		if(index < 0)
-			return false;
-		player.getOutputStream().close();
-		player.reset();
-		return true;
+	public Player remove(int id) throws IOException {
+		for (int i = 0; i < players.size(); i++) {
+			Player player = players.get(i);
+			if (player != null && player.getId() == id) {
+				players.set(i, null);
+				return player;
+			}
+		}
+		return null;
 	}
 }
