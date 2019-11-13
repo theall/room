@@ -6,8 +6,6 @@ import lan.server.thread.BroadcastThread;
 import lan.server.thread.ListenThread;
 import lan.server.thread.WorkThreadManager;
 import lan.utils.CmdParser;
-import lan.utils.NetCommand;
-import lan.utils.NetCommand.Code;
 import lan.utils.Room;
 
 class Server {

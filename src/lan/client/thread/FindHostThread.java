@@ -8,9 +8,11 @@ import lan.utils.Utils;
 
 public class FindHostThread extends Thread {
 	private RoomHeadList roomHeadList;
-
+	private RoomUpdateThread roomUpdateThread;
+	
 	public FindHostThread(Client c) {
 		roomHeadList = new RoomHeadList();
+		roomUpdateThread = new RoomUpdateThread(roomHeadList);
 	}
 
 	public RoomHeadList getRooms() {
@@ -23,6 +25,7 @@ public class FindHostThread extends Thread {
 		DatagramSocket ds = null;
 		DatagramPacket dp = null;
 		byte[] buf = new byte[1024];// 存储发来的消息
+		roomUpdateThread.start();
 		try {
 			boolean exit = false;
 			System.out.println("Receiving broadcast...");

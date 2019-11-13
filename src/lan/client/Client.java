@@ -6,7 +6,6 @@ import lan.client.thread.FindHostThread;
 import lan.client.thread.RoomHeadInfo;
 import lan.client.thread.WorkThread;
 import lan.utils.CmdParser;
-import lan.utils.Room;
 import lan.utils.Team.Type;
 
 public class Client {

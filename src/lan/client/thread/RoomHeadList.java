@@ -3,7 +3,7 @@ package lan.client.thread;
 import java.util.ArrayList;
 
 public class RoomHeadList {
-	private long timeOut = 3000;
+	private long timeOut = 2000;
 	private ArrayList<RoomHeadInfo> roomHeadInfors;
 
 	public RoomHeadList() {
@@ -30,7 +30,7 @@ public class RoomHeadList {
 		}
 	}
 
-	public void print() {
+	public synchronized void print() {
 		int index = 1;
 		for (RoomHeadInfo roomHeadInfo : roomHeadInfors) {
 			System.out.println(String.format("%d %s", index, roomHeadInfo.toString()));
@@ -38,10 +38,18 @@ public class RoomHeadList {
 		}
 	}
 
-	public RoomHeadInfo getRoom(int index) {
+	public synchronized RoomHeadInfo getRoom(int index) {
 		if (index < 0 || index >= roomHeadInfors.size())
 			return null;
 		return roomHeadInfors.get(index);
+	}
+	
+	public long getTimeOut() {
+		return timeOut;
+	}
+
+	public void setTimeOut(long timeOut) {
+		this.timeOut = timeOut;
 	}
 }
 

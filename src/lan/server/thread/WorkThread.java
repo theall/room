@@ -6,15 +6,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-import javax.smartcardio.CommandAPDU;
-
-import org.omg.CORBA.COMM_FAILURE;
-
 import lan.utils.NetCommand;
 import lan.utils.Player;
 import lan.utils.Position;
 import lan.utils.Room;
-import lan.utils.Team.Type;
 import lan.utils.NetCommand.Code;
 
 public class WorkThread extends Thread {

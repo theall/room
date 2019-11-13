@@ -8,10 +8,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import javafx.geometry.Pos;
 import lan.utils.Room;
 import lan.utils.Team;
-import lan.utils.Team.Type;
 import lan.utils.NetCommand;
 import lan.utils.Player;
 import lan.utils.Position;

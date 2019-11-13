@@ -9,7 +9,7 @@ public class RoomHeadInfo {
 	public long timestamp;
 
 	public boolean equals(RoomHeadInfo roomHeadInfo) {
-		return host.equals(roomHeadInfo.host) && port == roomHeadInfo.port;
+		return host.equals(roomHeadInfo.host);
 	}
 
 	public String toString() {

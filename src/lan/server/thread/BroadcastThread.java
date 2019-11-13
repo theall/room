@@ -59,6 +59,7 @@ public class BroadcastThread extends Thread {
 				ds.close();
 			} catch (Exception e) {
 				e.printStackTrace();
+				exit = true;
 			}
 		}
 	}
