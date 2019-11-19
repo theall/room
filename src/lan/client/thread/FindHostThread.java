@@ -4,19 +4,24 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 import lan.client.Client;
+import lan.client.util.RoomUpdate;
 import lan.utils.Utils;
 
-public class FindHostThread extends Thread {
+public class FindHostThread extends Thread { //寻找房间线程
 	private RoomHeadList roomHeadList;
 	private RoomUpdateThread roomUpdateThread;
 	
-	public FindHostThread(Client c) {
+	public FindHostThread() {
 		roomHeadList = new RoomHeadList();
 		roomUpdateThread = new RoomUpdateThread(roomHeadList);
 	}
 
 	public RoomHeadList getRooms() {
-		return roomHeadList;
+		return roomHeadList;//返回房间列表
+	}
+
+	public RoomHeadInfo getRoom(int index) {
+		return roomHeadList.getRoom(index);//返回的是房间列表的索引号
 	}
 
 	@Override
@@ -64,5 +69,10 @@ public class FindHostThread extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setRoomUpdate(RoomUpdate roomUpdate) {
+		if(roomUpdateThread != null) //如果刷新线程不为空
+			roomUpdateThread.setRoomUpdate(roomUpdate);//显示出来
 	}
 }

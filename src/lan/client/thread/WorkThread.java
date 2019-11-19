@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import lan.client.util.ClientInterface;
 import lan.utils.Room;
 import lan.utils.Team;
 import lan.utils.NetCommand;
@@ -15,18 +16,22 @@ import lan.utils.Player;
 import lan.utils.Position;
 import lan.utils.NetCommand.Code;
 
-public class WorkThread extends Thread {
-	private RoomHeadInfo roomHeadInfo;
+public class WorkThread extends Thread { //工作线程
+	private RoomHeadInfo roomHeadInfo; //房间列表信息
 	private Room room;
-	private ObjectOutputStream out;
-	private Player player;
-	private String name;
-	private ObjectInputStream in;
-	private Socket socket;
-
-	public WorkThread(RoomHeadInfo room, String name) {
+	private ObjectOutputStream out; //对象输出流
+	private Player player;//玩家
+	private String name;//玩家名字
+	private ObjectInputStream in;//输入
+	private Socket socket;//槽插座
+	private ClientInterface clientInterface;//客户端接口
+	public WorkThread(RoomHeadInfo room, String name) { //工作线程
 		roomHeadInfo = room;
 		this.name = name;
+	}
+
+	public void setClientInterface(ClientInterface clientInterface) { //客户端接口参数
+		this.clientInterface = clientInterface; //启动接口
 	}
 
 	@Override
@@ -36,14 +41,14 @@ public class WorkThread extends Thread {
 			InetAddress address = InetAddress.getByName(roomHeadInfo.host);
 			socket = new Socket(address, roomHeadInfo.port);
 
-			out = new ObjectOutputStream(socket.getOutputStream());
-			in = new ObjectInputStream(socket.getInputStream());
+			out = new ObjectOutputStream(socket.getOutputStream()); //OBject是对象，对象输出流
+			in = new ObjectInputStream(socket.getInputStream()); //对象输入流
 
-			boolean exit = false;
-			NetCommand in_cmd;
+			boolean  exit = false; //出口为假
+			NetCommand in_cmd; //网络指挥官
 			while (!exit) {
 				try {
-					in_cmd = (NetCommand) in.readObject();
+					in_cmd = (NetCommand) in.readObject(); //读对象
 				} catch (SocketException se) {
 					System.out.println("Server shutdown, exit!");
 					break;
@@ -62,6 +67,8 @@ public class WorkThread extends Thread {
 					System.out.println(room.toString());
 					break;
 				case MSG:
+					if(clientInterface != null)
+						clientInterface.onMessage(in_cmd.getSenderName(), (String) in_cmd.getData());
 					System.out.println(String.format("%s: %s", in_cmd.getSenderName(), (String) in_cmd.getData()));
 					break;
 				case NEW_PLAYER:

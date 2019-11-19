@@ -5,34 +5,40 @@ import java.util.Scanner;
 import lan.client.thread.FindHostThread;
 import lan.client.thread.RoomHeadInfo;
 import lan.client.thread.WorkThread;
+import lan.client.util.RoomUpdate;
 import lan.utils.CmdParser;
 import lan.utils.Team.Type;
 
 public class Client {
 
-	private String name = "test";
-	private FindHostThread findThread;
-	private WorkThread workThread;
+	private String name = "test";//定义一个字符串标题
+	private FindHostThread findThread; //定义寻找线程
+	private WorkThread workThread; //定义工作线程
 
 	public Client() {
 		// TODO Auto-generated constructor stub
 
 	}
 
-	public void join(RoomHeadInfo roomHeadInfo) {
-		if (workThread != null)
-			workThread.interrupt();
-		workThread = new WorkThread(roomHeadInfo, name);
-		workThread.start();
+	public void join(RoomHeadInfo roomHeadInfo) { //房间列表信息
+		if (workThread != null) //如果工作线程不为空
+			workThread.interrupt();//终止工作线程
+		workThread = new WorkThread(roomHeadInfo, name);	//在房间列表信息中标题
+		workThread.start(); //启动该工作线程
+	}
+
+	public void setRoomUpdate(RoomUpdate roomUpdate) {
+		if(findThread != null)
+			findThread.setRoomUpdate(roomUpdate);
 	}
 
 	public void start() {
-		findThread = new FindHostThread(this);
-		findThread.start();
+		findThread = new FindHostThread();	//在寻找房间线程中  建立find线程
+		findThread.start(); //启动寻找
 
 		try {
-			Scanner scanner = new Scanner(System.in);
-			boolean exit = false;
+			Scanner scanner = new Scanner(System.in);//在键盘上输入
+			boolean exit = false; //出口为假
 			while (!exit) {
 				System.out.print(name + ">");
 				String string = scanner.nextLine();
@@ -91,7 +97,7 @@ public class Client {
 							System.out.println("Need message!");
 							continue;
 						}
-						workThread.sendMessage(cmd.data);
+						workThread.sendMessage(cmd.data); //这里是接受消息
 						break;
 					case 3:// show room infor
 						System.out.println(workThread.getRoom().toString());

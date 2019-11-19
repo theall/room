@@ -2,8 +2,8 @@ package lan.client.thread;
 
 import java.util.ArrayList;
 
-public class RoomHeadList {
-	private long timeOut = 2000;
+public class RoomHeadList {//房间标题列表
+	private long timeOut = 2000;//超时
 	private ArrayList<RoomHeadInfo> roomHeadInfors;
 
 	public RoomHeadList() {
@@ -11,7 +11,7 @@ public class RoomHeadList {
 	}
 
 	public synchronized void add(RoomHeadInfo roomHeadInfo) {
-		for (RoomHeadInfo rhInfor : roomHeadInfors) {
+		for (RoomHeadInfo  	rhInfor : roomHeadInfors) { //高级for迭代器这里是在。。。
 			if (rhInfor.equals(roomHeadInfo)) {
 				rhInfor.set(roomHeadInfo);
 				return;
@@ -20,7 +20,7 @@ public class RoomHeadList {
 		roomHeadInfors.add(roomHeadInfo);
 	}
 
-	public synchronized void checkTimeOut() {
+	public synchronized void checkTimeOut() { //检查时间输出
 		long current = System.currentTimeMillis();
 		for (int i = roomHeadInfors.size() - 1; i >= 0; i--) {
 			RoomHeadInfo rhInfor = roomHeadInfors.get(i);
@@ -30,7 +30,7 @@ public class RoomHeadList {
 		}
 	}
 
-	public synchronized void print() {
+	public synchronized void print() {//打印
 		int index = 1;
 		for (RoomHeadInfo roomHeadInfo : roomHeadInfors) {
 			System.out.println(String.format("%d %s", index, roomHeadInfo.toString()));
@@ -43,7 +43,11 @@ public class RoomHeadList {
 			return null;
 		return roomHeadInfors.get(index);
 	}
-	
+
+	public synchronized ArrayList<RoomHeadInfo> getRoomHeadInfo() {
+		return roomHeadInfors;
+	}
+
 	public long getTimeOut() {
 		return timeOut;
 	}

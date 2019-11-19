@@ -1,19 +1,19 @@
 package lan.client.thread;
 
-public class RoomHeadInfo {
-	public String name;
-	public String host;
-	public int port;
-	public int current;
+public class RoomHeadInfo { //房间标题信息
+	public String name;//房间名字
+	public String host;//标题
+	public int port;//端口
+	public int current;//
 	public int capacity;
-	public long timestamp;
+	public long timestamp;//时间戳
 
 	public boolean equals(RoomHeadInfo roomHeadInfo) {
 		return host.equals(roomHeadInfo.host);
 	}
 
 	public String toString() {
-		return String.format("%s(%d|%d)", name, current, capacity);
+		return String.format("%s(%d|%d)", name, current, capacity); //看不懂
 	}
 
 	public void set(RoomHeadInfo roomHeadInfo) {

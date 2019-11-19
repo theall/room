@@ -1,6 +1,6 @@
 package lan.client;
 
-public class MyClient {
+public class MyClient { //¿Í»§¶Ë
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
