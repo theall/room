@@ -2,7 +2,7 @@ version: 1.0.{build}
 build_script:
 - cmd: build.bat
 artifacts:
-- path: *.jar
+- path: .\*.jar
   name: demo
 deploy:
 - provider: GitHub
