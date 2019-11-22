@@ -1,0 +1,11 @@
+version: 1.0.{build}
+build_script:
+- cmd: build.bat
+artifacts:
+- path: target/*.jar
+  name: demo
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: 8kN3hbUJPJ/PXh/d4FIliN+TdImIqTuJx1gg5zN/YXThKL2MGxw7A71+EiCfb8HBPkHVF9bhRSvVy5cfJVuw/8OUQ3TnXGRvp+CRzOrhV/o=
+  artifact: /.+\.jar/
