@@ -7,5 +7,5 @@ artifacts:
 deploy:
 - provider: GitHub
   auth_token:
-    secure: D/3LJCvnQzb2LT6rtq7KCPZcyW4fCmh9S0zJw4jsxGLRLSPRMaIdmd2iw/Yri+vT
+    secure: icaJlPkqzI3IUxSqUHgI34BtCpffDWxpp4otuYUAwA1RqMtQvAtdmXjOL9UOdqQI
   artifact: /.+\.jar/
