@@ -26,9 +26,9 @@ public class WorkThread extends Thread {
 	@Override
 	public void run() {
 		NetCommand command = new NetCommand(Code.HELLO);
-		command.setData("Im your daddy!");
 
-		try {
+
+		try {command.setData("Im your daddy!");
 			ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
 			outputStream.writeObject(command);

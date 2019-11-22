@@ -3,6 +3,9 @@ package lan.client.gui;
 import lan.client.thread.RoomHeadInfo;
 import lan.client.thread.WorkThread;
 import lan.client.util.ClientInterface;
+import lan.utils.Player;
+import lan.utils.Room;
+import lan.utils.Team;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,12 +15,19 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Vector;
 
-public class RoomDetail extends JFrame implements ClientInterface { //战斗界面
-    private Point mousePos = new Point();
-    private ObjectOutputStream outputStream;
+public class RoomDetail extends JFrame implements ClientInterface, MouseListener { //战斗界面
+    private Point mousePos = new Point();//定义鼠标点击
+    private ObjectOutputStream outputStream; //输出流
     private RoomDetail.MyPanel myPanel;
     private JButton btnJoin;
+
+    BufferedReader bReader;
+    LinkedList<String> msgList =new LinkedList<String>();//
 
     private class MyPanel extends JPanel {
         public MyPanel() {
@@ -78,30 +88,35 @@ public class RoomDetail extends JFrame implements ClientInterface { //战斗界面
     JLabel lblName,lblSend;
     JTextField txtName,txtSend;
     JButton btnSend;
+    PrintWriter pWriter;
 
-    private JList list; //定义房间界面变量方便后面调用
-    private JList list2;
-    private WorkThread workThread;
+    private JList listBlue; //定义房间界面变量方便后面调用
+    private JList listRed;
+    private WorkThread workThread; //工作线程
     public RoomDetail (RoomHeadInfo roomHeadInfo, String name) { //客户端图形界面
         workThread = new WorkThread(roomHeadInfo, name);
         workThread.setClientInterface(this);
         workThread.start();
 
         myPanel = new MyPanel();
-        list = new JList();//new出对象
+        listBlue = new JList();//new出对象
+        listBlue.addMouseListener(this);
         Object[] BLUE = {"1号", "2号", "3号","4号","5号"};
         //"=====","6号","7号","8号","9号","10号"};//数组类型的队列
-        list.setListData(BLUE);//这里是实例化
-        list.setBackground( Color.BLUE);
+        listBlue.setListData(BLUE);//这里是实例化
+        listBlue.setBackground( Color.BLUE);//设置队伍颜色
+        listBlue.setSize(100, 200);
+
               //无法共存
-        list2 = new JList();
+        listRed = new JList();
+        listRed.addMouseListener(this);
         Object[] Red = {"6号", "7号", "8号","9号","10号"};
-        list2.setListData( Red);
-        add(list2);
-        list2.setSize(100,200);
-        list2.setBackground( Color.RED);//这里是红蓝队伍颜色
-        add(list);//绘制界面大小
-        list.setSize(100, 200);
+        listRed.setListData( Red);
+        add(listRed);
+        listRed.setSize(100,200);
+        listRed.setBackground( Color.RED);//这里是红蓝队伍颜色
+        add(listBlue);//绘制界面大小
+
         setSize(480, 360);
         setLocation(400, 240);
 
@@ -109,14 +124,14 @@ public class RoomDetail extends JFrame implements ClientInterface { //战斗界面
 
         txtContent = new JTextArea();
         //设置文本域只读
-        txtContent.setEditable(false);
-        //txtContent.append(list + "\n");
+        txtContent.setEditable(false);//设置可编辑为假
+       // txtContent.append(listBlue + "\n");
 
 //        lblName = new JLabel("昵称:");
 //        txtName = new JTextField(5);
-        lblSend = new JLabel("发言:");
-        txtSend = new JTextField(20);
-        btnSend = new JButton("发送");
+        lblSend = new JLabel("发言:"); //发言文本
+        txtSend = new JTextField(20);//文本框
+        btnSend = new JButton("发送");//按钮
         btnSend.setMnemonic(java.awt.event.KeyEvent.VK_ENTER);
 
         panel = new JPanel();
@@ -128,8 +143,8 @@ public class RoomDetail extends JFrame implements ClientInterface { //战斗界面
 
 
         this.add(panel,BorderLayout.SOUTH); //对话框跟队伍的位置，中心 BorderLayout边框布局
-        this.add(list, BorderLayout.WEST);//队伍在左边函数 ，WEST西边
-        this.add(list2,BorderLayout.EAST);//北边
+        this.add(listBlue, BorderLayout.WEST);//队伍在左边函数 ，WEST西边
+        this.add(listRed,BorderLayout.EAST);//北边
         add(txtContent,BorderLayout.CENTER); //南边
         //this.setSize(500,300); //这里是我写的长宽
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -153,7 +168,7 @@ public class RoomDetail extends JFrame implements ClientInterface { //战斗界面
             }
 
             @Override
-            public void mouseDragged(MouseEvent e) {
+            public void mouseDragged(MouseEvent e) { //鼠标拖动
                 // TODO Auto-generated method stub
 
             }
@@ -163,6 +178,7 @@ public class RoomDetail extends JFrame implements ClientInterface { //战斗界面
             @Override
             public void actionPerformed(ActionEvent e) {
                 String constent = txtSend.getText();
+
                 try {
                     workThread.sendMessage(constent); //这里是接受消息
                 } catch (IOException e1) {
@@ -172,10 +188,90 @@ public class RoomDetail extends JFrame implements ClientInterface { //战斗界面
         });
     }
 
-    @Override
+    @Override               //，玩家  和消息
     public void onMessage(String player, String msg) {//上面的消息
-        txtContent.append(msg);
+        if(msg!= null) {
+            //SimpleDateFormat 日期格式化类，制定日期格式
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //获取当前系统时间，并使用日期格式化类华为制定格式读字符串
+            String strTime = dateFormat.format(new Date());
+            //将时间和信息添加到信息链表集合中
+            msgList.addFirst("<==" + strTime + "==>\n" + msg);
+            addMsg(strTime);//输出时间
+            addMsg(player +"说：" + msg);//那就输出
+        }
         txtSend.setText(""); //清空对话框消息
+    }
+
+    @Override
+    public void roomRefreshed(Room room) { //重写了接口的方法
+        if(room == null) //如果房间为空就返回空
+            return;
+
+        setTeamToList(room.getBlue(), listBlue); //调用方法同步名字
+        setTeamToList(room.getRed(), listRed); //房间名字同步到了列表中
+    }
+
+    private void setTeamToList(Team team, JList list) { //封装函数
+        Vector<String> vector = new Vector<String>();//列表定义变量 vector
+        for(int i=0;i<team.getCapacity();i++) {
+            Player player = team.getPlayer(i);
+            if(player == null) { //如果列表玩家为空
+                vector.add("                ");//打印空字符串
+            } else {
+                vector.add(player.getName());//否则就输出名字
+            }
+        }
+        list.setListData(vector); //实列我的队伍
+    }
+
+    private void addMsg(String msg) {
+        txtContent.append(msg); //输出说的话
+        txtContent.append("\n");//换行
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) { //这里是鼠标双击进入房间
+        JList listTeam = (JList)e.getSource();
+        Team.Type teamType;
+        if(listTeam == listRed) {
+            teamType = Team.Type.RED;
+        } else if(listTeam == listBlue) {
+            teamType = Team.Type.BLUE;
+        } else {
+            return;
+        }
+        int index = listTeam.getSelectedIndex(); //定义了索引，list选择索引，也就是在list当中点点点
+        if (index != -1) {                  //如果索引到不少于1次
+            int clickCount = e.getClickCount();//点击计数
+            if (clickCount == 2) {              //如果2次就进入
+                try {
+                    workThread.changeTeam(teamType, index);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 
     public static BufferedImage getScreen() {

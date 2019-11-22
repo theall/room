@@ -77,6 +77,9 @@ public class WorkThread extends Thread { //工作线程
 						player = p;
 					room.add(p);
 					System.out.println("New player join: " + p.getName());
+					if(clientInterface != null) {
+						clientInterface.roomRefreshed(room);
+					}
 					break;
 				case LEAVE:
 					room.remove(player.getId());
@@ -88,6 +91,9 @@ public class WorkThread extends Thread { //工作线程
 					room.movePlayer(sender.getId(), position.getType(), position.getIndex());
 					System.out.println(String.format("Player [%s] change team to [%s] position [%d]", sender.getName(),
 							position.getType().toString(), position.getIndex()));
+					if(clientInterface != null) {
+						clientInterface.roomRefreshed(room);
+					}
 					break;
 				default:
 					break;
@@ -154,6 +160,17 @@ public class WorkThread extends Thread { //工作线程
 		if (socket != null) {
 			socket.close();
 			socket = null;
+		}
+	}
+
+	public void movePlayer(Team.Type type, int index) {
+		if(room==null || player==null)
+			return;
+
+		try {
+			room.movePlayer(player.getId(), type, index);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

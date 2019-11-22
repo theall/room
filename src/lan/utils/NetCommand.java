@@ -15,7 +15,7 @@ public class NetCommand implements Serializable {
 	private Code code;
 	private Player sender;
 	private Object data;
-
+	//这里设置时间
 	public NetCommand() {
 		code = Code.NULL;
 	}

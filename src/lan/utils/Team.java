@@ -93,7 +93,7 @@ public class Team implements Serializable {
 		return index;
 	}
 
-	public String toString() {
+	public String toString() { //这里是打字的吗
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("Team:" + type.toString() + "\n");
 		for (Player player : players) {

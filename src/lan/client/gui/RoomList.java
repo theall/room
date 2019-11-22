@@ -25,7 +25,7 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
         findThread.setRoomUpdate(this);
         findThread.start();
         char cha[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        char ch[] = new char[3];
+        char ch[] = new char[2];
         for (int i = 0; i < ch.length; i++) {
             int index;
             index = (int) (Math.random() * (cha.length)); //随机在A到Z3个字母
@@ -35,7 +35,8 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
 
         list = new JList();//new出对象
         lblName = new JLabel("昵称:");
-        txtName = new JTextField(Arrays.toString(ch), 5);//这里用法是一个长度为int5的文本框
+        txtName = new JTextField(Arrays.toString(ch),5);//这里用法是一个长度为int5的文本框 //随机名字
+
         //btnSend = new JButton("确认");
         JPanel panel;
 
@@ -52,9 +53,7 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
         this.add(panel, BorderLayout.SOUTH);
         //this.setSize(500,300); //这里是我写的长宽
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         RoomList self = this;
-
         list.addMouseListener(new MouseListener() { //鼠标监听，也就是鼠标点到我的列表就开始监听
             @Override
             public void mouseClicked(MouseEvent e) { //这里是鼠标双击进入房间
@@ -66,7 +65,7 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
                         if (name.trim().length() <= 0) { //这里用到了trim函数然后对比长度为0就无法
                             JOptionPane.showMessageDialog(self, "名字为空");//如果名字为空就无法进入
                             return;
-                        } else {//这里是如果有名字的话自动跳转到队伍中
+                        } else {
 
                         }
                         RoomHeadInfo roomHeadInfo = findThread.getRoom(index); //查找线程

@@ -20,7 +20,7 @@ public class Client {
 
 	}
 
-	public void join(RoomHeadInfo roomHeadInfo) { //房间列表信息
+	public void join(RoomHeadInfo roomHeadInfo) { //房间标题信息 jion连接
 		if (workThread != null) //如果工作线程不为空
 			workThread.interrupt();//终止工作线程
 		workThread = new WorkThread(roomHeadInfo, name);	//在房间列表信息中标题
@@ -46,7 +46,7 @@ public class Client {
 				try {
 					cmd = CmdParser.parse(string);
 				} catch (Exception e) {
-					System.out.println("Invalid command, reinput!");
+					System.out.println("Invalid command, reinput!");//命令无效重新输入
 					continue;
 				}
 				int n = cmd.index;
@@ -57,11 +57,11 @@ public class Client {
 						break;
 					case 1:// set name
 						if (cmd.data == null) {
-							System.out.println("Invalid command, reinput!");
-							continue;
-						}
-						name = cmd.data;
-						break;
+							System.out.println("Invalid command, reinput!");//命令无效重新输入
+						continue;
+					}
+					name = cmd.data;
+					break;
 					case 2:// scan rooms
 						findThread.getRooms().print();
 						break;
@@ -71,7 +71,7 @@ public class Client {
 							roomNo = Integer.parseInt(cmd.data);
 						}
 						join(findThread.getRooms().getRoom(roomNo - 1));
-						System.out.println("Your choose " + roomNo);
+						System.out.println("Your choose " + roomNo); //你的的选择
 						break;
 					case 9:// exit
 						exit = true;
@@ -87,14 +87,14 @@ public class Client {
 						break;
 					case 1:// change team
 						if (cmd.data == null) {
-							System.out.println("Need team name!");
+							System.out.println("Need team name!"); //需要团队名称
 							continue;
 						}
 						name = cmd.data;
 						break;
 					case 2:// send message
 						if (cmd.data == null) {
-							System.out.println("Need message!");
+							System.out.println("Need message!"); //需要留言
 							continue;
 						}
 						workThread.sendMessage(cmd.data); //这里是接受消息
@@ -108,7 +108,7 @@ public class Client {
 							Type type = index<5?Type.BLUE:Type.RED;
 							if(index > 5)
 								index -= 5;
-							workThread.changeTeam(type, index);
+							workThread.changeTeam(type, index); //type是队伍，INdex索引
 						}
 						break;
 					case 9:// exit room
@@ -116,7 +116,7 @@ public class Client {
 						workThread = null;
 						break;
 					default:
-						System.out.println("error number");
+						System.out.println("error number");//错误号
 						break;
 					}
 				}
