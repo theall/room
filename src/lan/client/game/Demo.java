@@ -2,6 +2,7 @@ package lan.client.game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 public class Demo {
 	private int x;
@@ -52,7 +53,8 @@ public class Demo {
 	private Image image;
 
 	public Demo() {
-		this.image = new ImageIcon("src/resources/test.png").getImage();
+		URL imgURL = Demo.class.getResource("/resources/test.png");
+		this.image = new ImageIcon(imgURL).getImage();
 		this.width = 100;
 		this.height = 100;
 	}
