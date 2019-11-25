@@ -1,8 +1,10 @@
 package lan.client.gui;
 
+import lan.client.game.MyThread;
 import lan.client.thread.RoomHeadInfo;
 import lan.client.thread.WorkThread;
 import lan.client.util.ClientInterface;
+import lan.client.game.DeomFrame;
 import lan.utils.Player;
 import lan.utils.Room;
 import lan.utils.Team;
@@ -88,6 +90,7 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
     JLabel lblName,lblSend;
     JTextField txtName,txtSend;
     JButton btnSend;
+    JButton button;
     PrintWriter pWriter;
 
     private JList listBlue; //定义房间界面变量方便后面调用
@@ -102,19 +105,17 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
         listBlue = new JList();//new出对象
         listBlue.addMouseListener(this);
         Object[] BLUE = {"1号", "2号", "3号","4号","5号"};
-        //"=====","6号","7号","8号","9号","10号"};//数组类型的队列
         listBlue.setListData(BLUE);//这里是实例化
-        listBlue.setBackground( Color.BLUE);//设置队伍颜色
+       // listBlue.setBackground( Color.BLUE);//设置队伍颜色
         listBlue.setSize(100, 200);
 
-              //无法共存
         listRed = new JList();
         listRed.addMouseListener(this);
         Object[] Red = {"6号", "7号", "8号","9号","10号"};
         listRed.setListData( Red);
         add(listRed);
         listRed.setSize(100,200);
-        listRed.setBackground( Color.RED);//这里是红蓝队伍颜色
+        //listRed.setBackground( Color.RED);//这里是红蓝队伍颜色
         add(listBlue);//绘制界面大小
 
         setSize(480, 360);
@@ -125,29 +126,24 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
         txtContent = new JTextArea();
         //设置文本域只读
         txtContent.setEditable(false);//设置可编辑为假
-       // txtContent.append(listBlue + "\n");
-
-//        lblName = new JLabel("昵称:");
-//        txtName = new JTextField(5);
         lblSend = new JLabel("发言:"); //发言文本
         txtSend = new JTextField(20);//文本框
         btnSend = new JButton("发送");//按钮
         btnSend.setMnemonic(java.awt.event.KeyEvent.VK_ENTER);
+        button = new JButton("开始游戏");
 
-        panel = new JPanel();
-//        panel.add(lblName);
-//        panel.add(txtName);
-        panel.add(lblSend);
+        panel = new JPanel(); //new绘制对象出来
+        panel.add(lblSend); //进行我画的按钮，窗口，一切绘制出来
         panel.add(txtSend);
         panel.add(btnSend);
-
-
+        panel.add(button);//绘制一个开始按钮
         this.add(panel,BorderLayout.SOUTH); //对话框跟队伍的位置，中心 BorderLayout边框布局
         this.add(listBlue, BorderLayout.WEST);//队伍在左边函数 ，WEST西边
         this.add(listRed,BorderLayout.EAST);//北边
         add(txtContent,BorderLayout.CENTER); //南边
         //this.setSize(500,300); //这里是我写的长宽
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//添加关闭程序
+
         myPanel.addMouseMotionListener(new MouseMotionListener() {
 
             @Override
@@ -186,6 +182,16 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
                 }
             }
         });
+
+        button.addActionListener(new ActionListener() {//按钮的事件监听
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (button!=null){              //因为我是按钮事件监听所以是在这里启动线程而不是Frame
+                    MyThread my=new MyThread(); //因为在Frame中无法同步所以利用线程实现窗口同步
+                    my.start();//启动线程
+                }
+            }
+        });
     }
 
     @Override               //，玩家  和消息
@@ -214,8 +220,8 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 
     private void setTeamToList(Team team, JList list) { //封装函数
         Vector<String> vector = new Vector<String>();//列表定义变量 vector
-        for(int i=0;i<team.getCapacity();i++) {
-            Player player = team.getPlayer(i);
+        for(int i=0;i<team.getCapacity();i++) { //在所有的Team中循环
+            Player player = team.getPlayer(i);//这里是给player值等于索引i
             if(player == null) { //如果列表玩家为空
                 vector.add("                ");//打印空字符串
             } else {
@@ -232,13 +238,13 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 
     @Override
     public void mouseClicked(MouseEvent e) { //这里是鼠标双击进入房间
-        JList listTeam = (JList)e.getSource();
-        Team.Type teamType;
-        if(listTeam == listRed) {
-            teamType = Team.Type.RED;
-        } else if(listTeam == listBlue) {
-            teamType = Team.Type.BLUE;
-        } else {
+        JList listTeam = (JList) e.getSource();//团队列表
+        Team.Type teamType;//团队类型
+        if (listTeam == listRed) {//如果列表的玩家=红队
+            teamType = Team.Type.RED;//那么就等于红
+        } else if (listTeam == listBlue) {//如果为蓝队
+            teamType = Team.Type.BLUE;//那么就是蓝
+        } else {  //什么都没有就为空
             return;
         }
         int index = listTeam.getSelectedIndex(); //定义了索引，list选择索引，也就是在list当中点点点
@@ -252,7 +258,7 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
                 }
             }
         }
-    }
+      }
 
     @Override
     public void mousePressed(MouseEvent e) {

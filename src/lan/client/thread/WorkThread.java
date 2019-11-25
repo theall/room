@@ -65,6 +65,7 @@ public class WorkThread extends Thread { //工作线程
 				case ROOM_INFO:
 					room = (Room) in_cmd.getData();
 					System.out.println(room.toString());
+
 					break;
 				case MSG:
 					if(clientInterface != null)
@@ -84,7 +85,11 @@ public class WorkThread extends Thread { //工作线程
 				case LEAVE:
 					room.remove(player.getId());
 					System.out.println("Player leave: " + player.getName());
+					if(clientInterface != null) {
+						clientInterface.roomRefreshed(room);
+					}
 					break;
+
 				case TEAM_CHANGE:
 					Player sender = in_cmd.getSender();
 					Position position = (Position)in_cmd.getData();

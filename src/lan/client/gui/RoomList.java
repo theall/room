@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
-import java.util.Arrays;
 
 public class RoomList extends JFrame implements RoomUpdate { //房间界面
     private JLabel lblName; //定义按钮变量
@@ -25,19 +24,18 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
         findThread.setRoomUpdate(this);
         findThread.start();
         char cha[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        char ch[] = new char[2];
-        for (int i = 0; i < ch.length; i++) {
+        String str = "";//定义字符串变量
+        for (int i = 0; i < 3; i++) {//进行循环
             int index;
             index = (int) (Math.random() * (cha.length)); //随机在A到Z3个字母
-            ch[i] = cha[index];
+            str = str + String.valueOf(cha[index]);
         }
 
 
         list = new JList();//new出对象
         lblName = new JLabel("昵称:");
-        txtName = new JTextField(Arrays.toString(ch),5);//这里用法是一个长度为int5的文本框 //随机名字
+        txtName = new JTextField(str, 5);//这里用法是一个长度为int5的文本框 //随机名字
 
-        //btnSend = new JButton("确认");
         JPanel panel;
 
         Object[] data = {"1号房间", "2号房间", "3号房间"};//数组类型的房间
@@ -49,10 +47,9 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
         panel = new JPanel(); //这里是在房间里添加我需要的按钮跟生成框架
         panel.add(lblName);
         panel.add(txtName);
-        //panel.add(btnSend);
-        this.add(panel, BorderLayout.SOUTH);
-        //this.setSize(500,300); //这里是我写的长宽
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.add(panel, BorderLayout.SOUTH);//这里是绘制的位置
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //添加关闭动作
+
         RoomList self = this;
         list.addMouseListener(new MouseListener() { //鼠标监听，也就是鼠标点到我的列表就开始监听
             @Override
@@ -73,7 +70,6 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
                         roomDetail.setVisible(true);//设置可见性
                     }
                     // JOptionPane.showInputDialog(null," 请输入你的昵称：\n","提示",JOptionPane.PLAIN_MESSAGE);
-
                 }
 
             }
@@ -100,6 +96,7 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
             }
         });
     }
+
 
     void setRoom(RoomHeadList roomHeadList) { //定义函数给参数
         if (roomHeadList == null || list == null) //如果战斗界面为空与列表为空
