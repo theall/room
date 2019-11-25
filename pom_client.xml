@@ -12,7 +12,7 @@
 		<sourceDirectory>src</sourceDirectory>
         <resources>
             <resource>
-                <directory>${project.basedir}/src/resources</directory>
+                <directory>src</directory>
             </resource>
         </resources>
 		<plugins>
