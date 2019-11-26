@@ -225,7 +225,7 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 		for (int i = 0; i < team.getCapacity(); i++) { // 在所有的Team中循环
 			Player player = team.getPlayer(i);// 这里是给player值等于索引i
 			if (player == null) { // 如果列表玩家为空
-				vector.add("                ");// 打印空字符串
+				vector.add("------------------");// 打印空字符串
 			} else {
 				vector.add(player.getName());// 否则就输出名字
 			}
