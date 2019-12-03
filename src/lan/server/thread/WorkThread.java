@@ -26,8 +26,6 @@ public class WorkThread extends Thread {
 	@Override
 	public void run() {
 		NetCommand command = new NetCommand(Code.HELLO);
-
-
 		try {command.setData("Im your daddy!");
 			ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -56,9 +54,9 @@ public class WorkThread extends Thread {
 				}
 				NetCommand out = new NetCommand(Code.NULL);
 				switch (command.getCode()) {
-				case MSG: // forward to clients
-					System.out.println(command.getSenderName() + ": " + (String) command.getData());
-					room.groupSend(command);
+				case MSG: // forward to clients，转发给客户端
+					System.out.println(command.getSenderName() + ": " + (String) command.getData());//获取发件人姓名，获取数据
+					room.groupSend(command);//组发送
 					break;
 				case TEAM_CHANGE:
 					Player sender = command.getSender();
@@ -69,6 +67,7 @@ public class WorkThread extends Thread {
 					room.groupSend(command);
 					break;
 				default:
+					room.groupSend(command);
 					break;
 				}
 				if (!out.isNull()) {

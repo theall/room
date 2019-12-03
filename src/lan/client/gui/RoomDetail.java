@@ -91,7 +91,7 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 	JLabel lblName, lblSend;
 	JTextField txtName, txtSend;
 	JButton btnSend;
-	JButton button;
+	JButton btnStart;
 	PrintWriter pWriter;
 
 	private JList listBlue; // 定义房间界面变量方便后面调用
@@ -132,13 +132,13 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 		txtSend = new JTextField(20);// 文本框
 		btnSend = new JButton("发送");// 按钮
 		btnSend.setMnemonic(java.awt.event.KeyEvent.VK_ENTER);
-		button = new JButton("开始游戏");
+		btnStart = new JButton("开始游戏");
 
 		panel = new JPanel(); // new绘制对象出来
 		panel.add(lblSend); // 进行我画的按钮，窗口，一切绘制出来
 		panel.add(txtSend);
 		panel.add(btnSend);
-		panel.add(button);// 绘制一个开始按钮
+		panel.add(btnStart);// 绘制一个开始按钮
 		this.add(panel, BorderLayout.SOUTH); // 对话框跟队伍的位置，中心 BorderLayout边框布局
 		this.add(listBlue, BorderLayout.WEST);// 队伍在左边函数 ，WEST西边
 		this.add(listRed, BorderLayout.EAST);// 北边
@@ -185,13 +185,12 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 			}
 		});
 
-		button.addActionListener(new ActionListener() {// 按钮的事件监听
+		btnStart.addActionListener(new ActionListener() {// 按钮的事件监听
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (button != null) { // 因为我是按钮事件监听所以是在这里启动线程而不是Frame
-					MyThread my = new MyThread(); // 因为在Frame中无法同步所以利用线程实现窗口同步
-					my.start();// 启动线程
-				}
+				boolean seedSend = workThread.sendSeed();
+				if(seedSend)
+					btnStart.setEnabled(false);
 			}
 		});
 	}
@@ -295,5 +294,13 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public void onSeed(long seed) {
+		System.out.println("Seed received, start game: " + seed);
+		// TODO 自动生成的方法存根
+		MyThread thread = new MyThread();
+		thread.start();
 	}
 }

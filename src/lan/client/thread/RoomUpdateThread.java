@@ -6,9 +6,9 @@ public class RoomUpdateThread extends Thread { //刷新房间列表线程
 	private RoomHeadList roomHeadList; //创建房间列表对象
 	private int checkInterval;//检验室
 	private RoomUpdate roomUpdate;//定义了刷线线程变量
-	public RoomUpdateThread(RoomHeadList roomHeadList) {
+	public RoomUpdateThread(RoomHeadList roomHeadList) {//房间更新线程
 		checkInterval = 500; //这里是5秒刷新1次列表
-		this.roomHeadList = roomHeadList;
+		this.roomHeadList = roomHeadList;//将传进来的参数给到成员变量里
 	}
 	
 	public int getCheckInterval() {

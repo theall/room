@@ -9,13 +9,14 @@ public class NetCommand implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum Code {
-		NULL, HELLO, OK, NEW_PLAYER, LEAVE, ROOM_INFO, MAP_CHANGE, TEAM_CHANGE, MSG, SEND_MSG
+		NULL, HELLO, OK, NEW_PLAYER, LEAVE, ROOM_INFO, MAP_CHANGE, TEAM_CHANGE, MSG, SEND_MSG, SEED
 	}
 
 	private Code code;
 	private Player sender;
 	private Object data;
-	//这里设置时间
+
+	// 这里设置时间
 	public NetCommand() {
 		code = Code.NULL;
 	}

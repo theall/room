@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class RoomHeadList {//房间标题列表
 	private long timeOut = 2000;//超时
-	private ArrayList<RoomHeadInfo> roomHeadInfors;
+	private ArrayList<RoomHeadInfo> roomHeadInfors;//创建一个成员变量数据类型为ArrayList<RoomHeadInfo（房间标题信息）>
 
-	public RoomHeadList() {
-		roomHeadInfors = new ArrayList<RoomHeadInfo>();
+	public RoomHeadList() {//构造函数，用于初始化函数
+		roomHeadInfors = new ArrayList<RoomHeadInfo>();//创建房间标题信息对象
 	}
 
 	public synchronized void add(RoomHeadInfo roomHeadInfo) {

@@ -100,6 +100,12 @@ public class WorkThread extends Thread { //工作线程
 						clientInterface.roomRefreshed(room);
 					}
 					break;
+				case SEED:
+					long seed = (long)in_cmd.getData();
+					if(clientInterface != null) {
+						clientInterface.onSeed(seed);
+					}
+					break;
 				default:
 					break;
 				}
@@ -133,6 +139,22 @@ public class WorkThread extends Thread { //工作线程
 		out.writeObject(command);
 	}
 
+	public boolean sendSeed() {
+		boolean ret = false;
+		long seed = System.currentTimeMillis();//获取一个种子
+		NetCommand command = new NetCommand(Code.SEED);
+		command.setSender(player);
+		command.setData(seed);
+		try {
+			out.writeObject(command);//写输出流
+			ret = true;
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
 	public void changeTeam(Team.Type type, int index) throws IOException {
 		if (out == null)
 			return;
