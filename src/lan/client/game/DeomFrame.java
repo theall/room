@@ -36,7 +36,6 @@ public class DeomFrame extends JFrame {
 				} else if (KeyEvent.VK_K == e.getKeyCode()) {// Õº∆¨±‰–°
 					demo.setWidth(demo.getWidth() - 10);
 					demo.setHeight(demo.getHeight() - 10);
-
 				}
 			}
 

@@ -53,8 +53,9 @@ public class Demo {
 	private Image image;
 
 	public Demo() {
-		URL imgURL = Demo.class.getResource("/resources/test.png");
-		this.image = new ImageIcon(imgURL).getImage();
+		//URL imgURL = Demo.class.getResource("resources/test.jpg");
+		//this.image =  new ImageIcon("scr/resources/1.jpg").getImage();
+		this.image =new ImageIcon("scr/resources/1.jpg").getImage();
 		this.width = 100;
 		this.height = 100;
 	}

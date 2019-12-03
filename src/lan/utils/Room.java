@@ -33,15 +33,15 @@ public class Room implements Serializable {
 		this.name = name;
 	}
 
-	public String getName() {//将已有的数据抛出去
+	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
-		this.name = name;//将传递过来的参数给到成员变量
+		this.name = name;
 	}
 
-	public int getCapacity() {//判断还有多少房间容量
+	public int getCapacity() {
 		return blue.getCapacity() + red.getCapacity();
 	}
 
@@ -65,7 +65,7 @@ public class Room implements Serializable {
 		return blue.available() + red.available();
 	}
 
-	public int getUsedSize() {//统计玩家人数
+	public int getUsedSize() {
 		return blue.getSize() + red.getSize();
 	}
 
@@ -77,8 +77,8 @@ public class Room implements Serializable {
 		return red;
 	}
 
-	public String toString() {//底2个命令的实现，显示房间情况
-		StringBuffer buffer = new StringBuffer();//创建一个字符串修改
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
 		// name|player_count|capacity
 		buffer.append(String.format("%s|%d|%d\n", name, getUsedSize(), capacity));
 		buffer.append(blue.toString());
@@ -94,9 +94,9 @@ public class Room implements Serializable {
 		this.timeStamp = timeStamp;
 	}
 
-	public ArrayList<Player> getPlayers() {//获取玩家
-		ArrayList<Player> players = new ArrayList<Player>();//创建对象
-		players.addAll(blue.getPlayers());//
+	public ArrayList<Player> getPlayers() {
+		ArrayList<Player> players = new ArrayList<Player>();
+		players.addAll(blue.getPlayers());
 		players.addAll(red.getPlayers());
 		return players;
 	}
@@ -144,7 +144,7 @@ public class Room implements Serializable {
 		groupSend(command);
 	}
 
-	public void groupSend(NetCommand command) throws IOException {//组发送
+	public void groupSend(NetCommand command) throws IOException {
 		ArrayList<Player> players = getPlayers();
 		for (Player player : players) {
 			player.sendCommand(command);

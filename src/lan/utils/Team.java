@@ -42,7 +42,7 @@ public class Team implements Serializable {
 		return true;
 	}
 
-	public int getSize() {//统计玩家人数
+	public int getSize() {
 		int n = 0;
 		for (Player player : players) {
 			if (player != null && player.isValid())

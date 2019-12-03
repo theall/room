@@ -41,6 +41,7 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
         Object[] data = {"1号房间", "2号房间", "3号房间"};//数组类型的房间
         list.setListData(data);//这里是实例化
         add(list);//绘制界面大小
+        setTitle("房间列表");
         setSize(480, 360);
         setLocation(400, 240);
 

@@ -7,7 +7,7 @@ import java.net.Socket;
 import lan.utils.Utils;
 
 public class ListenThread extends Thread {
-	private WorkThreadManager manager;//创建里一个数据类型为WorkThreadManager的成员变量
+	private WorkThreadManager manager;
 
 	public ListenThread(WorkThreadManager manager) {
 		this.manager = manager;
