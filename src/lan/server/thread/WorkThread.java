@@ -69,6 +69,7 @@ public class WorkThread extends Thread {
 					room.groupSend(command);
 					break;
 				default:
+					room.groupSend(command);
 					break;
 				}
 				if (!out.isNull()) {

@@ -2,7 +2,7 @@ package lan.client.gui.widget.list;
 
 import javax.swing.*;
 
-public class IconText {
+public class IconText { //封装图标和文本创建对象
     private int icon;
     private String text;
 

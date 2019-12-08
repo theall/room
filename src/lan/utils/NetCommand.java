@@ -9,7 +9,7 @@ public class NetCommand implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum Code {
-		NULL, HELLO, OK, NEW_PLAYER, LEAVE, ROOM_INFO, MAP_CHANGE, TEAM_CHANGE, MSG, SEND_MSG, SEED
+		NULL, HELLO, OK, NEW_PLAYER, LEAVE, ROOM_INFO, MAP_CHANGE, TEAM_CHANGE, MSG, SEND_MSG, SEED,OUT,
 	}
 
 	private Code code;

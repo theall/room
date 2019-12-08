@@ -13,7 +13,7 @@ public class RoomHeadInfo { //房间标题信息
 	}
 
 	public String toString() {
-		return String.format("%s(%d|%d)", name, current, capacity); //看不懂
+		return String.format("%s(%d|%d)", name, current, capacity);
 	}
 
 	public void set(RoomHeadInfo roomHeadInfo) {

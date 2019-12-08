@@ -13,7 +13,7 @@ public class MyJList extends JList {
     private static final long serialVersionUID = 1L;
     private ImageListModel listModel = new ImageListModel();
     public MyJList() {
-        setModel(listModel);
+        setModel(listModel); //容器
         setCellRenderer(new ImageCellRender());
     }
 
@@ -32,7 +32,7 @@ public class MyJList extends JList {
 
     }
 
-    public void setListData(ArrayList<IconText> iconList) {
+    public void setListData(ArrayList<IconText> iconList) { //这里写的是图标集合，先放到容器中然后用ID号找
         for(IconText icon : iconList) {
             listModel.addElement(icon);
         }

@@ -23,7 +23,6 @@ public class RoomUpdateThread extends Thread { //刷新房间列表线程
 	public void run() { //这里是重写了刷新线程的方法
 		if(roomHeadList == null)	//如果房间列表为空
 			return;				//就返回空
-		
 		while(true) {   		//如果有
 			roomHeadList.checkTimeOut();
 			if(roomUpdate != null)			//如果刷新列表不为空

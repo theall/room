@@ -65,6 +65,6 @@ public class ChooseCharacterDialog extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ChooseCharacterDialog().setVisible(true);
+        new ChooseCharacterDialog().setVisible(true);//启动选人列表
     }
 }

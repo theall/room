@@ -106,6 +106,12 @@ public class WorkThread extends Thread { //工作线程
 						clientInterface.onSeed(seed);
 					}
 					break;
+					case OUT: //对应接口类型
+						long out = (long)in_cmd.getData();
+						if(clientInterface != null) { //如果接口不为空
+							clientInterface.onOut(out);
+						}
+						break;
 				default:
 					break;
 				}
@@ -153,6 +159,21 @@ public class WorkThread extends Thread { //工作线程
 			e.printStackTrace();
 		}
 		return ret;
+	}
+	public boolean sendOut() { //踢人命令
+		boolean end = false;
+		long Out = System.currentTimeMillis();//获取一个种子
+		NetCommand command = new NetCommand(Code.OUT);
+		command.setSender(player);
+		command.setData(Out);
+		try {
+			out.writeObject(command);//写输出流
+			end = true;
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+		return end;
 	}
 	
 	public void changeTeam(Team.Type type, int index) throws IOException {

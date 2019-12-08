@@ -20,7 +20,7 @@ class Server {
 
 	public void start() {
 		room = new Room();
-		room.setName("theall");
+		room.setName("theall");//·¿¼äÃû×Ö
 
 		workThreadManager = new WorkThreadManager(room);
 		

@@ -7,6 +7,7 @@ import java.net.URL;
 public class Demo {
 	private int x;
 	private int y;
+	private boolean upIsDown;
 
 	public int getX() {
 		return x;
@@ -55,8 +56,18 @@ public class Demo {
 	public Demo() {
 		//URL imgURL = Demo.class.getResource("resources/test.jpg");
 		//this.image =  new ImageIcon("scr/resources/1.jpg").getImage();
-		this.image =new ImageIcon("scr/resources/1.jpg").getImage();
+		this.image =new ImageIcon("src/resources/1.jpg").getImage();
 		this.width = 100;
 		this.height = 100;
+	}
+
+	public void step() {
+		if(upIsDown) {
+
+		}
+	}
+
+	public void render(Graphics g) {
+
 	}
 }
