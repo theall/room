@@ -53,7 +53,7 @@ public class DemoFrame extends JFrame {
 		});
 	}
 
-	private int getRandStep() {
+	private int getRandStep() {//把动作写入Step中也就是用帧写游戏
 		return random.nextInt(9) + 1;
 	}
 

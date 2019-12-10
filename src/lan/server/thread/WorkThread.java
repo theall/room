@@ -20,16 +20,15 @@ public class WorkThread extends Thread {
 	private boolean exit;
 	private ThreadControl threadControl;
 
-	public WorkThread(Room room, Socket socket, ThreadControl ThreadControl) {
+	public WorkThread(Room room, Socket socket, ThreadControl threadControl) {
 		this.room = room;
 		this.socket = socket;
+		this.threadControl = threadControl;
 	}
 
 	@Override
 	public void run() {
 		NetCommand command = new NetCommand(Code.HELLO);
-
-
 		try {command.setData("Im your daddy!");
 			ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -72,13 +71,13 @@ public class WorkThread extends Thread {
 					break;
 				case KICK:
 					Player player = (Player)command.getData();
-					boolean check = isPlayerThread(player);
-					if(check == true) {
+					boolean check = isYou(player);
+					if(check == false) {
 						boolean detection = threadControl.remove(player);
 						if(detection == true) {
 							NetCommand kickCmd = new NetCommand(Code.KICK);
 							kickCmd.setData(player);
-							room.groupSend(kick);
+							room.groupSend(kickCmd);
 							break;
 						}
 					} else {
@@ -108,7 +107,7 @@ public class WorkThread extends Thread {
 		}
 	}
 	
-	public boolean isPlayerThread(Player player) {
+	public boolean isYou(Player player) {
 		return this.player.getId() == player.getId();
 	}
 

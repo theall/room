@@ -1,10 +1,13 @@
 package lan.client.gui.widget.list;
 
+import lan.utils.Player;
+
 import javax.swing.*;
 
 public class IconText { //封装图标和文本创建对象
     private int icon;
     private String text;
+    private Player player;
 
     public IconText(int icon) {
         this.icon = icon;

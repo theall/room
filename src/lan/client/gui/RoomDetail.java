@@ -25,66 +25,15 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Vector;
 
-public class RoomDetail extends JFrame implements ClientInterface, MouseListener { // 战斗界面
+public class RoomDetail extends JFrame implements
+        ClientInterface,
+        MouseListener,
+        ActionListener { // 战斗界面
     private Point mousePos = new Point();// 定义鼠标点击
     private ObjectOutputStream outputStream; // 输出流
-    private RoomDetail.MyPanel myPanel;
     private JButton btnJoin;
-    //private JPopupMenu popMenu; //这个是弹拉式菜单，后面枚举是可以创建类似按钮的控件列表
     BufferedReader bReader;
-    LinkedList<String> msgList = new LinkedList<String>();//
-
-    private class MyPanel extends JPanel {
-        public MyPanel() {
-            FlowLayout layout = new FlowLayout();
-            setLayout(layout);
-            JTextField txtName = new JTextField();
-            // txtName.setText("client");
-            MyJList listRoom = new MyJList();
-
-            JPanel leftPanel = new JPanel();
-            leftPanel.add(txtName);
-            leftPanel.add(listRoom);
-
-            btnJoin = new JButton();
-            btnJoin.setText("join");
-            listRoom.add(btnJoin);
-
-            btnJoin.addActionListener(new ActionListener() {
-                //// 注册监听
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // TODO Auto-generated method stub
-
-                }
-            });
-            add(leftPanel);
-            pack();
-        }
-
-        @Override
-        public void paint(Graphics g) {
-            super.paint(g);
-            if (mousePos != null)
-                g.fillRect(mousePos.x - 2, mousePos.y - 2, 5, 5);
-
-        }
-    }
-
-    private void startSocket() {
-        Socket socket;
-        try {
-            socket = new Socket("localhost", 44445);
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
-        } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
+    LinkedList<String> msgList = new LinkedList<String>();
 
     private static final long serialVersionUID = 1L;
     // 这里我设置的绘制区域需要调用的函数名
@@ -95,7 +44,9 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
     JTextField txtName, txtSend;
     JButton btnSend;
     JButton btnStart;
-    //JButton btnout;
+    JPopupMenu popupMenu;
+    JMenuItem menuKick;
+    JMenuItem menuSetOwner;
 
     private JButton btnChoosePlayer;//定义选人按钮
     PrintWriter pWriter;
@@ -108,27 +59,15 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
         workThread.setClientInterface(this);
         workThread.start();
 
-        myPanel = new MyPanel();
-        listBlue = new MyJList();// new出对象
-        listBlue.addMouseListener(this);
-        Object[] BLUE = {"1号", "2号", "3号", "4号", "5号"};
-        listBlue.setListData(BLUE);// 这里是实例化
-        // listBlue.setBackground( Color.BLUE);//设置队伍颜色
-        listBlue.setSize(100, 200);
-        listRed = new MyJList();
-        listRed.addMouseListener(this);
-        Object[] Red = {"6号", "7号", "8号", "9号", "10号"};
-        listRed.setListData(Red);
-        add(listRed);
-        listRed.setSize(100, 200);
-        // listRed.setBackground( Color.RED);//这里是红蓝队伍颜色
-        add(listBlue);// 绘制界面大小
-
+        setTitle("战斗房间"); // 标题
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(680, 460);
         setLocation(400, 240);
-        setTitle("战斗房间"); // 标题
+        setVisible(true);
+
+        listBlue = createList();
+        listRed = createList();
 
         txtContent = new JTextArea();
         // 设置文本域只读
@@ -140,7 +79,6 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
         btnStart = new JButton("开始游戏");
         lblName = new JLabel("队伍列表");//创建了一个文本标签
         btnChoosePlayer = new JButton("选择角色");
-        //btnout = new JButton("踢出");
 
         panel = new JPanel(); // new绘制对象出来
         panel.add(lblSend); // 进行我画的按钮，窗口，一切绘制出来
@@ -149,16 +87,47 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
         panel.add(btnStart);// 绘制一个开始按钮
         panel.add(lblName);//绘制头顶列表信息
         panel.add(btnChoosePlayer);
-        //panel.add(btnout);//踢人按钮
 
         this.add(panel, BorderLayout.SOUTH); // 对话框跟队伍的位置，南边 BorderLayout边框布局
         this.add(listBlue, BorderLayout.WEST);// 队伍在左边函数 ，WEST西边
         this.add(listRed, BorderLayout.EAST);// 东边
         this.add(lblName, BorderLayout.NORTH);//北边，也就是置顶
         add(txtContent, BorderLayout.CENTER); // 中心
-        // this.setSize(500,300); //这里是我写的长宽
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 添加关闭程序
 
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 添加关闭程序
+        loadIcons();
+
+        btnSend.addActionListener(this);
+        btnStart.addActionListener(this);
+        btnChoosePlayer.addActionListener(this);
+        listBlue.addMouseListener(this);
+        listRed.addMouseListener(this);
+        initPopMenu();
+    }
+
+    private MyJList createList() {//把列表封装成函数然后调用
+        MyJList list = new MyJList();
+        list.addMouseListener(this);
+        Object[] Red = {"1号", "2号", "3号", "4号", "5号"};
+        list.setListData(Red);
+        add(list);
+        list.setSize(100, 200);
+        return list;
+    }
+
+    private void initPopMenu() {
+        popupMenu = new JPopupMenu();//在方法中拿到JPopupMenu类的对象
+        menuKick = new JMenuItem("踢出");//菜单列表
+        menuSetOwner = new JMenuItem("房主");//菜单列表
+        popupMenu.add(menuKick);//跟jPanel一样先注册在绘制
+        popupMenu.addSeparator();//分割线
+        popupMenu.add(menuSetOwner);
+        setVisible(true);
+        menuKick.addActionListener(this);
+        menuSetOwner.addActionListener(this);
+    }
+
+    private void loadIcons() {
         File[] files = new File("src/resources").listFiles(new FileFilter() {
             public boolean accept(File file) {      //如果跳这里异常，不是文件路径错了，就是文件丢失
                 return file.getName().endsWith("jpg");
@@ -170,212 +139,7 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
             iconArrayList.add(icon);
         }
         ImageCellRender.setCharacters(iconArrayList);
-
-        myPanel.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                if (outputStream == null)
-                    return;
-
-                try {
-                    // outputStream.writeObject(e.getPoint());
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    ImageIO.write(RoomDetail.getScreen(), "jpg", byteArrayOutputStream);
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                mousePos = e.getPoint();
-                myPanel.updateUI();
-            }
-
-            @Override
-            public void mouseDragged(MouseEvent e) { // 鼠标拖动
-                // TODO Auto-generated method stub
-
-            }
-        });
-
-        btnSend.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String constent = txtSend.getText();
-
-                try {
-                    workThread.sendMessage(constent); // 这里是接受消息
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
-
-        btnStart.addActionListener(new ActionListener() {// 按钮的事件监听
-            @Override
-            public void actionPerformed(ActionEvent e) { //如果传过来种子不对启动为假
-                boolean seedSend = workThread.sendSeed();
-                if (seedSend)  //种子发送
-                    btnStart.setEnabled(false);//启动为假
-            }
-        });
-        /*btnout.addActionListener(new ActionListener() {// 按钮的事件监听
-            @Override
-            public void actionPerformed(ActionEvent e) { //如果传过来种子不对启动为假
-                boolean seedout = workThread.sendOut();
-                if (seedout)//发送种子以后我需要踢人
-                    ;
-            }
-        });*/
-
-        btnChoosePlayer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (btnChoosePlayer != null) { //
-                    new ChooseCharacterDialog().setVisible(true);//如果玩家不为空就启动游戏
-                }
-            }
-        });
-        btnChoosePlayer.addMouseListener(new MouseListener() { //鼠标监听，这里需要我点击图片的监听事件，实现很多方法
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                //int index = btnChoosePlayer.getSelectedIndex();
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
-
-		/*btnout.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				MyJList listTeam = (MyJList) e.getSource();// 列表
-				Team.Type teamType;// 团队类型
-				//int index = btnChoosePlayer.getSelectedIndex();
-				if (listTeam == listRed) {// 如果列表的玩家=红队
-					teamType = Team.Type.RED;// 那么就等于红
-				} else if (listTeam == listBlue) {// 如果为蓝队
-					teamType = Team.Type.BLUE;// 那么就是蓝
-				} else { // 什么都没有就为空
-					return;
-				}
-				int index = listTeam.getSelectedIndex();
-				if (index != -1) { // 如果索引到不少于1次
-					int clickCount = e.getClickCount();// 点击计数
-					if (clickCount>= 1) { // 如果1次或者大于1次
-						try {
-							workThread.changeTeam(teamType, index);
-							workThread.stop();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-
-						}
-						//setVisible(false);
-						listTeam.updateUI();//列表刷新
-					}
-				}
-
-			}
-		});*/
-        listBlue.addMouseListener(new MouseListener() { //鼠标监听然后调用下面静态方法
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                // 如果是鼠标右键，则显示弹出菜单
-                if (e.isMetaDown()) {
-                    showPopupMenu(e.getComponent(), e.getX(), e.getY());
-                }
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
-
-        listRed.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (e.isMetaDown()) {
-                    showPopupMenu(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            } //鼠标监听然后调用下面静态方法
-        });
     }
-
-    public static void showPopupMenu(Component invoker, int x, int y) {
-        JPopupMenu popupMenu = new JPopupMenu();//在静态方法中拿到JPopupMenu类的对象
-        JMenuItem Out = new JMenuItem("踢出");//菜单列表
-        JMenuItem Homeowner = new JMenuItem("房主");//菜单列表
-        popupMenu.add(Out);//跟jPanel一样先注册在绘制
-        popupMenu.addSeparator();//分割线
-        popupMenu.add(Homeowner);
-        Out.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("已经踢出");
-            }
-        });
-        Homeowner.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("转让房主");
-            }
-        });
-        popupMenu.show(invoker, x, y);
-    }
-
 
     @Override // ，玩家 和消息
     public void onMessage(String player, String msg) {// 上面的消息
@@ -453,7 +217,10 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        int button = e.getButton();
+        if(button == 3) {// right button
+            popupMenu.show((Component)e.getSource(), e.getX(), e.getY());
+        }
     }
 
     @Override
@@ -466,18 +233,40 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
 
     }
 
-    public static BufferedImage getScreen() {
-        try {
-            Robot rb = null; // java.awt.image包中的类，可以用来抓取屏幕，即截屏。
-            rb = new Robot();
-            Toolkit tk = Toolkit.getDefaultToolkit(); // 获取缺省工具包
-            Dimension di = tk.getScreenSize(); // 屏幕尺寸规格
-            Rectangle rec = new Rectangle(0, 0, di.width, di.height);
-            BufferedImage bi = rb.createScreenCapture(rec);
-            return bi;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object object = e.getSource();
+        if(object instanceof JButton) {
+            try {
+                JButton button = (JButton)object;
+                if (button == btnStart) {
+                    // 开始游戏
+                    boolean seedSend = workThread.sendSeed();
+                    if (seedSend)  //种子发送
+                        btnStart.setEnabled(false);//启动为假
+                } else if (button == btnSend) {
+                    String constent = txtSend.getText();
+                    workThread.sendMessage(constent); // 这里是接受消息
+                } else if (button == btnChoosePlayer) {
+                    new ChooseCharacterDialog().setVisible(true);//如果按钮不为空就启动选人界面
+                }
+                return;
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        } else if(object instanceof JMenuItem) {
+            JMenuItem menuItem = (JMenuItem) e.getSource();
+            if (menuItem == menuKick) { //如果点击的是踢人就发送
+                MyJList list = (MyJList) popupMenu.getInvoker();
+                Team.Type teamType;
+                int index;
+                if (list == listRed)
+                    teamType = Team.Type.RED;
+                else
+                    teamType = Team.Type.BLUE;
+
+                workThread.sendKickCmd(teamType, list.getSelectedIndex());//调用工作线程将要踢掉的人发送出去
+            }
         }
     }
 
@@ -489,9 +278,11 @@ public class RoomDetail extends JFrame implements ClientInterface, MouseListener
         gameFrame.setSeed(seed);
         gameFrame.setVisible(true);
     }
+
     @Override
-    public void onOut(long out) { //这里是最后一步，将谁踢掉了，然后发送出去，上面需要写踢人命令
-        System.out.println("out received,OUT : " + out);
+    public void onPlayerKicked(Player player, Room room) {
+        System.out.println(player.getName() + " is kicked：");
+        roomRefreshed(room);
     }
 }
 

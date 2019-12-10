@@ -9,6 +9,10 @@ public class ImageListModel extends DefaultListModel {
     private static final long serialVersionUID = 1L;
     private List<IconText> iconTextList = new ArrayList<IconText>();
 
+    public ImageListModel() {
+
+    }
+
     public void addElement(IconText iconText) {
         iconTextList.add(iconText);
     }

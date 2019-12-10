@@ -12,7 +12,7 @@ import lan.client.gui.widget.list.ImageCellRender;
 import lan.client.gui.widget.list.MyJList;
 
 public class ChooseCharacterDialog extends JFrame {
-    private MyJList list = new MyJList();
+    private MyJList list = new MyJList();//在我的MYJList中创建了LISt
 
     private ArrayList<String> nameList = new ArrayList<>();
     private ArrayList<Integer> idList = new ArrayList<>();

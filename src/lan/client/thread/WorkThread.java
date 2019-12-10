@@ -20,9 +20,9 @@ public class WorkThread extends Thread { //工作线程
 	private RoomHeadInfo roomHeadInfo; //房间列表信息
 	private Room room;
 	private ObjectOutputStream out; //对象输出流
+	private ObjectInputStream in;//输入
 	private Player player;//玩家
 	private String name;//玩家名字
-	private ObjectInputStream in;//输入
 	private Socket socket;//槽插座
 	private ClientInterface clientInterface;//客户端接口
 	public WorkThread(RoomHeadInfo room, String name) { //工作线程
@@ -106,13 +106,14 @@ public class WorkThread extends Thread { //工作线程
 						clientInterface.onSeed(seed);
 					}
 					break;
-					case OUT: //对应接口类型
-						long out = (long)in_cmd.getData();
-						if(clientInterface != null) { //如果接口不为空
-							clientInterface.onOut(out);
-						}
-						break;
-				default:
+				case KICK: //对应接口类型
+					Player player = (Player)in_cmd.getData();
+					room.remove(player.getId());
+					if(clientInterface != null) { //如果接口不为空
+						clientInterface.onPlayerKicked(player, room);
+					}
+					break;
+					default:
 					break;
 				}
 				if (!out_cmd.isNull()) {
@@ -135,7 +136,7 @@ public class WorkThread extends Thread { //工作线程
 		}
 	}
 
-	public void sendMessage(String msg) throws IOException {
+	public void sendMessage(String msg) throws IOException {//发送消息通知服务器
 		if (out == null)
 			return;
 
@@ -145,12 +146,12 @@ public class WorkThread extends Thread { //工作线程
 		out.writeObject(command);
 	}
 
-	public boolean sendSeed() {
+	public boolean sendSeed() {//这里是在线程中写了一个方法通知服务器启动游戏
 		boolean ret = false;
 		long seed = System.currentTimeMillis();//获取一个种子
-		NetCommand command = new NetCommand(Code.SEED);
-		command.setSender(player);
-		command.setData(seed);
+		NetCommand command = new NetCommand(Code.SEED); //命令
+		command.setSender(player);//发送者
+		command.setData(seed);//数据
 		try {
 			out.writeObject(command);//写输出流
 			ret = true;
@@ -160,20 +161,24 @@ public class WorkThread extends Thread { //工作线程
 		}
 		return ret;
 	}
-	public boolean sendOut() { //踢人命令
+
+	public Player getPlayer(Team.Type teamType, int index) {
+		return room.getPlayer(teamType, index);
+	}
+
+	public void sendKickCmd(Team.Type team, int index) { //踢人命令
 		boolean end = false;
-		long Out = System.currentTimeMillis();//获取一个种子
-		NetCommand command = new NetCommand(Code.OUT);
+		NetCommand command = new NetCommand(Code.KICK);
 		command.setSender(player);
-		command.setData(Out);
+
+		Player _player = getPlayer(team, index);
+		command.setData(_player);
 		try {
 			out.writeObject(command);//写输出流
-			end = true;
 		} catch (IOException e) {
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 		}
-		return end;
 	}
 	
 	public void changeTeam(Team.Type type, int index) throws IOException {
@@ -183,10 +188,10 @@ public class WorkThread extends Thread { //工作线程
 		NetCommand command = new NetCommand(Code.TEAM_CHANGE);
 		command.setSender(player);
 		
-		Position position = new Position();
+		Position position = new Position();//位置
 		position.setType(type);
 		position.setIndex(index);
-		command.setData(position);
+		command.setData(position);//发送的数据
 		out.writeObject(command);
 	}
 

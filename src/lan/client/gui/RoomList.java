@@ -70,11 +70,8 @@ public class RoomList extends JFrame implements RoomUpdate { //房间界面
                         RoomDetail roomDetail = new RoomDetail(roomHeadInfo, name); //这里是在战斗界面给对象然后给参数
                         roomDetail.setVisible(true);//设置可见性
                     }
-                    // JOptionPane.showInputDialog(null," 请输入你的昵称：\n","提示",JOptionPane.PLAIN_MESSAGE);
                 }
-
             }
-
 
             @Override
             public void mousePressed(MouseEvent e) {

@@ -61,7 +61,7 @@ public class Demo {
 		this.height = 100;
 	}
 
-	public void step() {
+	public void step() {//把数据写这里
 		if(upIsDown) {
 
 		}

@@ -203,4 +203,14 @@ public class Room implements Serializable {
 		}
 		return id;
 	}
+
+	public Player getPlayer(Team.Type teamType, int index) {
+		Team team;
+		if(teamType == Team.Type.BLUE) {
+			team = blue;
+		} else {
+			team = red;
+		}
+		return team.getPlayer(index);
+	}
 }

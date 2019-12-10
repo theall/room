@@ -11,10 +11,8 @@ import java.util.Vector;
 
 public class MyJList extends JList {
     private static final long serialVersionUID = 1L;
-    private ImageListModel listModel = new ImageListModel();
-    public MyJList() {
-        setModel(listModel); //容器
-        setCellRenderer(new ImageCellRender());
+    public MyJList() { //用函数封装了Jlist列表
+
     }
 
     public void setListData(ArrayList<Integer> iconList, ArrayList<String> textList) {
@@ -32,11 +30,14 @@ public class MyJList extends JList {
 
     }
 
-    public void setListData(ArrayList<IconText> iconList) { //这里写的是图标集合，先放到容器中然后用ID号找
+    public void setListData(ArrayList<IconText> iconList) {
+        ImageListModel model = new ImageListModel();
+        ImageCellRender render = new ImageCellRender();
         for(IconText icon : iconList) {
-            listModel.addElement(icon);
+            model.addElement(icon);
         }
-        setModel(listModel);
+        setModel(model); //容器
+        setCellRenderer(render);
     }
 
     public static void main(String[] args) {
