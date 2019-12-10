@@ -2,10 +2,12 @@ package lan.server.thread;
 
 import java.net.Socket;
 import lan.utils.NetCommand;
+import lan.utils.Player;
+
 import java.util.ArrayList;
 import lan.utils.Room;
 
-public class WorkThreadManager {
+public class WorkThreadManager implements ThreadControl {
 	private ArrayList<WorkThread> thread_pool;
 	private Room room;
 
@@ -15,7 +17,7 @@ public class WorkThreadManager {
 	}
 
 	public void createNewWorkThread(Socket socket) {
-		WorkThread thread = new WorkThread(room, socket);
+		WorkThread thread = new WorkThread(room, socket, this);
 		thread_pool.add(thread);
 		thread.start();
 	}
@@ -30,5 +32,17 @@ public class WorkThreadManager {
 		for (WorkThread thread : thread_pool) {
 			thread.interrupt();
 		}
+	}
+
+	@Override
+	public boolean remove(Player player) {
+		// TODO 自动生成的方法存根
+		for( int i = 0 ; i < thread_pool.size() ; i++) {
+			if((thread_pool.get(i)).getId() == player.getId()) {
+				(thread_pool.get(i)).close();
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -17,8 +17,10 @@ public class WorkThread extends Thread {
 	private ObjectOutputStream outputStream;
 	private Room room;
 	private Player player;
+	private boolean exit;
+	private ThreadControl threadControl;
 
-	public WorkThread(Room room, Socket socket) {
+	public WorkThread(Room room, Socket socket, ThreadControl ThreadControl) {
 		this.room = room;
 		this.socket = socket;
 	}
@@ -68,6 +70,21 @@ public class WorkThread extends Thread {
 							position.getType().toString(), position.getIndex()));
 					room.groupSend(command);
 					break;
+				case KICK:
+					Player player = (Player)command.getData();
+					boolean check = isPlayerThread(player);
+					if(check == true) {
+						boolean detection = threadControl.remove(player);
+						if(detection == true) {
+							NetCommand kickCmd = new NetCommand(Code.KICK);
+							kickCmd.setData(player);
+							room.groupSend(kick);
+							break;
+						}
+					} else {
+						System.out.println("Data illegal");
+						break;
+					}
 				default:
 					room.groupSend(command);
 					break;
@@ -79,6 +96,20 @@ public class WorkThread extends Thread {
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void close() {
+		exit = true;
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean isPlayerThread(Player player) {
+		return this.player.getId() == player.getId();
 	}
 
 	public void sendObject(Object object) {
