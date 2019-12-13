@@ -112,7 +112,16 @@ public class Room implements Serializable {
 			player = red.remove(id);
 		return player;
 	}
-
+	
+	public synchronized void synchronizePlayerRoleId(int playerId, int roleId) {
+		if(playerId < 0)
+			return;
+		
+		Player p = findPlayerById(playerId);
+		if(p != null)
+			p.setRoleId(roleId);
+	}
+	
 	public synchronized void add(Player player) throws IOException {
 		if (player.getType() == Team.Type.BLUE) {
 			getBlue().add(player);

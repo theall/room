@@ -9,16 +9,17 @@ public class NetCommand implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum Code {
-		NULL, HELLO, OK, NEW_PLAYER, LEAVE, ROOM_INFO, MAP_CHANGE, TEAM_CHANGE, MSG, SEND_MSG, SEED, KICK
+		NULL, HELLO, OK, NEW_PLAYER, LEAVE, ROOM_INFO, MAP_CHANGE, TEAM_CHANGE, MSG, SEND_MSG, SEED, KICK, SELECT_ROLE
 	}
 
 	private Code code;
-	private Player sender;
+	private int sender;
 	private Object data;
 
 	// 这里设置时间
 	public NetCommand() {
 		code = Code.NULL;
+		sender = -1;
 	}
 
 	public Object getData() {
@@ -45,15 +46,11 @@ public class NetCommand implements Serializable {
 		return code == Code.NULL;
 	}
 
-	public Player getSender() {
+	public int getSender() {
 		return sender;
 	}
 
-	public void setSender(Player sender) {
+	public void setSender(int sender) {
 		this.sender = sender;
-	}
-
-	public String getSenderName() {
-		return sender != null ? sender.getName() : "";
 	}
 }

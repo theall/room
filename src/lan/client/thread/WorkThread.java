@@ -57,6 +57,8 @@ public class WorkThread extends Thread { //工作线程
 					break;
 				}
 				NetCommand out_cmd = new NetCommand();
+				int senderId = in_cmd.getSender();
+				Player sender = room!=null?room.findPlayerById(senderId):null;
 				switch (in_cmd.getCode()) {
 				case HELLO:
 					out_cmd.setCode(Code.OK);
@@ -69,12 +71,12 @@ public class WorkThread extends Thread { //工作线程
 					break;
 				case MSG:
 					if(clientInterface != null)
-						clientInterface.onMessage(in_cmd.getSenderName(), (String) in_cmd.getData());
-					System.out.println(String.format("%s: %s", in_cmd.getSenderName(), (String) in_cmd.getData()));
+						clientInterface.onMessage(sender.getName(), (String) in_cmd.getData());
+					System.out.println(String.format("%s: %s", sender.getName(), (String) in_cmd.getData()));
 					break;
 				case NEW_PLAYER:
 					Player p = (Player) in_cmd.getData();
-					if (player == null)
+					if (sender == null)
 						player = p;
 					room.add(p);
 					System.out.println("New player join: " + p.getName());
@@ -83,15 +85,13 @@ public class WorkThread extends Thread { //工作线程
 					}
 					break;
 				case LEAVE:
-					room.remove(player.getId());
-					System.out.println("Player leave: " + player.getName());
+					room.remove(sender.getId());
+					System.out.println("Player leave: " + sender.getName());
 					if(clientInterface != null) {
 						clientInterface.roomRefreshed(room);
 					}
 					break;
-
 				case TEAM_CHANGE:
-					Player sender = in_cmd.getSender();
 					Position position = (Position)in_cmd.getData();
 					room.movePlayer(sender.getId(), position.getType(), position.getIndex());
 					System.out.println(String.format("Player [%s] change team to [%s] position [%d]", sender.getName(),
@@ -113,7 +113,13 @@ public class WorkThread extends Thread { //工作线程
 						clientInterface.onPlayerKicked(player, room);
 					}
 					break;
-					default:
+				case SELECT_ROLE:
+					room.synchronizePlayerRoleId(senderId, sender.getRoleId());
+					if(clientInterface != null) {
+						clientInterface.roomRefreshed(room);
+					}
+					break;
+				default:
 					break;
 				}
 				if (!out_cmd.isNull()) {
@@ -141,16 +147,29 @@ public class WorkThread extends Thread { //工作线程
 			return;
 
 		NetCommand command = new NetCommand(Code.MSG);
-		command.setSender(player);
+		command.setSender(player.getId());
 		command.setData(msg);
 		out.writeObject(command);
+	}
+	
+	public void sendRoleChanged(int role_id) {
+		NetCommand command = new NetCommand(Code.SELECT_ROLE);
+		player.setRoleId(role_id);
+		command.setSender(player.getId());
+		command.setData(role_id);
+		try {
+			out.writeObject(command);
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}//写输出流
 	}
 
 	public boolean sendSeed() {//这里是在线程中写了一个方法通知服务器启动游戏
 		boolean ret = false;
 		long seed = System.currentTimeMillis();//获取一个种子
 		NetCommand command = new NetCommand(Code.SEED); //命令
-		command.setSender(player);//发送者
+		command.setSender(player.getId());//发送者
 		command.setData(seed);//数据
 		try {
 			out.writeObject(command);//写输出流
@@ -169,7 +188,7 @@ public class WorkThread extends Thread { //工作线程
 	public void sendKickCmd(Team.Type team, int index) { //踢人命令
 		boolean end = false;
 		NetCommand command = new NetCommand(Code.KICK);
-		command.setSender(player);
+		command.setSender(player.getId());
 
 		Player _player = getPlayer(team, index);
 		command.setData(_player);
@@ -186,7 +205,7 @@ public class WorkThread extends Thread { //工作线程
 			return;
 
 		NetCommand command = new NetCommand(Code.TEAM_CHANGE);
-		command.setSender(player);
+		command.setSender(player.getId());
 		
 		Position position = new Position();//位置
 		position.setType(type);

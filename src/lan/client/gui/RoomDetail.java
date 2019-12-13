@@ -176,7 +176,10 @@ public class RoomDetail extends JFrame implements
             } else {
                 nameList.add(player.getName());// 否则就输出名字
             }
-            idList.add(1);
+            if(player != null)
+            	idList.add(player.getRoleId());
+            else
+            	idList.add(0);
         }
         list.setListData(idList, nameList);
     }
@@ -248,7 +251,10 @@ public class RoomDetail extends JFrame implements
                     String constent = txtSend.getText();
                     workThread.sendMessage(constent); // 这里是接受消息
                 } else if (button == btnChoosePlayer) {
-                    new ChooseCharacterDialog().setVisible(true);//如果按钮不为空就启动选人界面
+                	ChooseCharacterDialog dialog = new ChooseCharacterDialog();
+                	dialog.setVisible(true);//如果按钮不为空就启动选人界面
+                    int role_id = dialog.getRoleId();
+                    workThread.sendRoleChanged(role_id);
                 }
                 return;
             } catch (IOException e1) {
@@ -259,17 +265,17 @@ public class RoomDetail extends JFrame implements
             if (menuItem == menuKick) { //如果点击的是踢人就发送
                 MyJList list = (MyJList) popupMenu.getInvoker();
                 Team.Type teamType;
-                int index;
+                int index = list.getSelectedIndex();
                 if (list == listRed)
                     teamType = Team.Type.RED;
                 else
                     teamType = Team.Type.BLUE;
 
-                workThread.sendKickCmd(teamType, list.getSelectedIndex());//调用工作线程将要踢掉的人发送出去
+                workThread.sendKickCmd(teamType, index);//调用工作线程将要踢掉的人发送出去
             }
         }
     }
-
+    
     @Override
     public void onSeed(long seed) { //这个地方通知服务器启动游戏
         System.out.println("Seed received, start game: " + seed);

@@ -29,7 +29,8 @@ public class WorkThread extends Thread {
 	@Override
 	public void run() {
 		NetCommand command = new NetCommand(Code.HELLO);
-		try {command.setData("Im your daddy!");
+		try {
+			command.setData("Im your daddy!");
 			ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
 			outputStream.writeObject(command);
@@ -56,21 +57,21 @@ public class WorkThread extends Thread {
 					break;
 				}
 				NetCommand out = new NetCommand(Code.NULL);
+				int senderId = command.getSender();
+				Player player = room.findPlayerById(senderId);
 				switch (command.getCode()) {
 				case MSG: // forward to clients
-					System.out.println(command.getSenderName() + ": " + (String) command.getData());
+					System.out.println(player.getName() + ": " + (String) command.getData());
 					room.groupSend(command);
 					break;
 				case TEAM_CHANGE:
-					Player sender = command.getSender();
 					Position position = (Position)command.getData();
-					room.movePlayer(sender.getId(), position.getType(), position.getIndex());
-					System.out.println(String.format("Player [%s] change team to [%s] position [%d]", sender.getName(),
-							position.getType().toString(), position.getIndex()));
+					room.movePlayer(senderId, position.getType(), position.getIndex());
+					System.out.println(String.format("Player [%s] change team to [%s] position [%d]", player.getName(),
+					position.getType().toString(), position.getIndex()));
 					room.groupSend(command);
 					break;
 				case KICK:
-					Player player = (Player)command.getData();
 					boolean check = isYou(player);
 					if(check == false) {
 						boolean detection = threadControl.remove(player);
@@ -84,6 +85,13 @@ public class WorkThread extends Thread {
 						System.out.println("Data illegal");
 						break;
 					}
+				case SELECT_ROLE:
+					int playerId = command.getSender();
+					int roleId = (Integer)command.getData();
+					room.synchronizePlayerRoleId(playerId, roleId);
+					System.out.println("server role id:" + roleId);
+					room.groupSend(command);
+					break;
 				default:
 					room.groupSend(command);
 					break;

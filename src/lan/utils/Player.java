@@ -11,6 +11,7 @@ public class Player implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private int id;
+	private int roleId;
 	private String name;
 	private Team.Type type;
 	transient private ObjectOutputStream outputStream;
@@ -97,5 +98,13 @@ public class Player implements Serializable {
 	
 	public String toString() {
 		return String.format("%d-%s", id, name);
+	}
+	
+	public void setRoleId(int role_id) {
+		this.roleId = role_id;
+	}
+	
+	public int getRoleId() {
+		return roleId;
 	}
 }
