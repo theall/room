@@ -1,11 +1,10 @@
 package lan.client.gui.widget.list;
 
 import javax.swing.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageListModel extends DefaultListModel {
+public class ImageListModel extends DefaultListModel<Object> {
     private static final long serialVersionUID = 1L;
     private List<IconText> iconTextList = new ArrayList<IconText>();
 

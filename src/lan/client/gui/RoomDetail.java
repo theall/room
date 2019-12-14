@@ -1,70 +1,83 @@
 package lan.client.gui;
 
 import lan.client.game.DemoFrame;
-import lan.client.game.MyThread;
+import lan.client.gui.widget.list.IconText;
 import lan.client.gui.widget.list.ImageCellRender;
 import lan.client.gui.widget.list.MyJList;
-import lan.client.thread.RoomHeadInfo;
 import lan.client.thread.WorkThread;
 import lan.client.util.ClientInterface;
 import lan.utils.Player;
 import lan.utils.Room;
 import lan.utils.Team;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Vector;
 
-public class RoomDetail extends JFrame implements
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class RoomDetail extends JDialog implements
         ClientInterface,
         MouseListener,
-        ActionListener { // 战斗界面
-    private Point mousePos = new Point();// 定义鼠标点击
-    private ObjectOutputStream outputStream; // 输出流
-    private JButton btnJoin;
+        ActionListener, 
+        WindowListener { // 战斗界面
     BufferedReader bReader;
     LinkedList<String> msgList = new LinkedList<String>();
 
     private static final long serialVersionUID = 1L;
     // 这里我设置的绘制区域需要调用的函数名
-    JPanel panel;
-    JScrollPane sPane;
-    JTextArea txtContent;
-    JLabel lblName, lblSend;//文本标签
-    JTextField txtName, txtSend;
-    JButton btnSend;
-    JButton btnStart;
-    JPopupMenu popupMenu;
-    JMenuItem menuKick;
-    JMenuItem menuSetOwner;
-
+    private JPanel panel;
+    private JTextArea txtContent;
+    private JLabel lblName, lblSend;//文本标签
+    private JTextField txtSend;
+    private JButton btnSend;
+    private JButton btnStart;
+    private JPopupMenu popupMenu;
+    private JMenuItem menuKick;
+    private JMenuItem menuSetOwner;
     private JButton btnChoosePlayer;//定义选人按钮
-    PrintWriter pWriter;
     private MyJList listBlue; // 定义房间界面变量方便后面调用
     private MyJList listRed;
+    
+    private int roomOwnerId = -1;
     private WorkThread workThread; // 工作线程
 
-    public RoomDetail(RoomHeadInfo roomHeadInfo, String name) { // 客户端图形界面
-        workThread = new WorkThread(roomHeadInfo, name);
-        workThread.setClientInterface(this);
-        workThread.start();
+    public RoomDetail(String host, int port, String name) { // 客户端图形界面 
+    	initialize();
+    	
+		workThread = new WorkThread(host, port, name);
+		workThread.setClientInterface(this);
+		workThread.start();
+    }
 
-        setTitle("战斗房间"); // 标题
+    public void initialize() {
+    	setTitle("战斗房间"); // 标题
+        setModal(true);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setSize(680, 460);
         setLocation(400, 240);
-        setVisible(true);
 
         listBlue = createList();
         listRed = createList();
@@ -94,17 +107,15 @@ public class RoomDetail extends JFrame implements
         this.add(lblName, BorderLayout.NORTH);//北边，也就是置顶
         add(txtContent, BorderLayout.CENTER); // 中心
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 添加关闭程序
         loadIcons();
 
         btnSend.addActionListener(this);
         btnStart.addActionListener(this);
         btnChoosePlayer.addActionListener(this);
-        listBlue.addMouseListener(this);
-        listRed.addMouseListener(this);
+        this.addWindowListener((WindowListener) this);
         initPopMenu();
     }
-
+    
     private MyJList createList() {//把列表封装成函数然后调用
         MyJList list = new MyJList();
         list.addMouseListener(this);
@@ -122,22 +133,19 @@ public class RoomDetail extends JFrame implements
         popupMenu.add(menuKick);//跟jPanel一样先注册在绘制
         popupMenu.addSeparator();//分割线
         popupMenu.add(menuSetOwner);
-        setVisible(true);
         menuKick.addActionListener(this);
         menuSetOwner.addActionListener(this);
     }
 
     private void loadIcons() {
-        File[] files = new File("src/resources").listFiles(new FileFilter() {
-            public boolean accept(File file) {      //如果跳这里异常，不是文件路径错了，就是文件丢失
-                return file.getName().endsWith("jpg");
-            }
-        });
-        ArrayList<ImageIcon> iconArrayList = new ArrayList<>();
-        for (File file : files) {
-            ImageIcon icon = new ImageIcon(file.getPath());
-            iconArrayList.add(icon);
-        }
+    	ArrayList<ImageIcon> iconArrayList = new ArrayList<>();
+    	for(int i=1;i<=10;i++) {
+    		String imageName = String.format("/resources/%d.jpg", i);
+    		URL imageURL = this.getClass().getResource(imageName);
+    		ImageIcon imageIcon = new ImageIcon(imageURL);
+    		iconArrayList.add(imageIcon);
+    	}
+    	
         ImageCellRender.setCharacters(iconArrayList);
     }
 
@@ -161,27 +169,33 @@ public class RoomDetail extends JFrame implements
         if (room == null) // 如果房间为空就返回空
             return;
 
+        roomOwnerId = room.getOwner();
         setTeamToList(room.getBlue(), listBlue); // 调用方法同步名字
         setTeamToList(room.getRed(), listRed); // 房间名字同步到了列表中
     }
 
     private void setTeamToList(Team team, MyJList list) { // 封装函数
-        ArrayList<String> nameList = new ArrayList<String>();// 列表定义变量 vector
-        ArrayList<Integer> idList = new ArrayList<>();
+        int myId = workThread.getMyId();
+        ArrayList<IconText> iconTexts = new ArrayList<IconText>();
         for (int i = 0; i < team.getCapacity(); i++) { // 在所有的Team中循环
             Player player = team.getPlayer(i);// 这里是给player值等于索引i
-
-            if (player == null) { // 如果列表玩家为空
-                nameList.add("------------------");// 打印空字符串
-            } else {
-                nameList.add(player.getName());// 否则就输出名字
+            IconText iconText = new IconText();
+            
+            if (player != null) { // 如果列表玩家为空
+                iconText.setText(player.getName());
+                iconText.setIcon(player.getRoleId());
+                
+                int playerId = player.getId();
+                // Check if it's me
+                if(playerId == roomOwnerId) {
+                	iconText.setColor(Color.red);
+                } else if(playerId == myId) {
+                	iconText.setColor(Color.green);
+                } 
             }
-            if(player != null)
-            	idList.add(player.getRoleId());
-            else
-            	idList.add(0);
+            iconTexts.add(iconText);
         }
-        list.setListData(idList, nameList);
+        list.setListData(iconTexts);
     }
 
     private void addMsg(String msg) {
@@ -202,14 +216,10 @@ public class RoomDetail extends JFrame implements
         }
         int index = listTeam.getSelectedIndex(); // 定义了索引，list选择索引，也就是在list当中点点点
         if (index != -1) { // 如果索引到不少于1次
-            int clickCount = e.getClickCount();// 点击计数
-            if (clickCount == 2) { // 如果2次就进入
-                try {
-                    workThread.changeTeam(teamType, index);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
+        	Player player = workThread.getRoom().findPlayerByIndex(teamType, index);
+        	if(player == null) {// Change team
+        		workThread.changeTeam(teamType, index);
+        	}
         }
     }
 
@@ -252,6 +262,7 @@ public class RoomDetail extends JFrame implements
                     workThread.sendMessage(constent); // 这里是接受消息
                 } else if (button == btnChoosePlayer) {
                 	ChooseCharacterDialog dialog = new ChooseCharacterDialog();
+                	dialog.setLocationRelativeTo(btnStart);
                 	dialog.setVisible(true);//如果按钮不为空就启动选人界面
                     int role_id = dialog.getRoleId();
                     workThread.sendRoleChanged(role_id);
@@ -290,5 +301,46 @@ public class RoomDetail extends JFrame implements
         System.out.println(player.getName() + " is kicked：");
         roomRefreshed(room);
     }
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		workThread.close();
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 

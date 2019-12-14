@@ -23,7 +23,8 @@ public class Client {
 	public void join(RoomHeadInfo roomHeadInfo) { //房间标题信息 jion连接
 		if (workThread != null) //如果工作线程不为空
 			workThread.interrupt();//终止工作线程
-		workThread = new WorkThread(roomHeadInfo, name);	//在房间列表信息中标题
+		
+		workThread = new WorkThread(roomHeadInfo.host, roomHeadInfo.port, name);	//在房间列表信息中标题
 		workThread.start(); //启动该工作线程
 	}
 

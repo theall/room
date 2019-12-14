@@ -17,17 +17,21 @@ import lan.utils.Position;
 import lan.utils.NetCommand.Code;
 
 public class WorkThread extends Thread { //工作线程
-	private RoomHeadInfo roomHeadInfo; //房间列表信息
+	private String remoteHost;// Server host
+	private int port;
 	private Room room;
 	private ObjectOutputStream out; //对象输出流
 	private ObjectInputStream in;//输入
-	private Player player;//玩家
+	private Player me;//玩家
 	private String name;//玩家名字
 	private Socket socket;//槽插座
 	private ClientInterface clientInterface;//客户端接口
-	public WorkThread(RoomHeadInfo room, String name) { //工作线程
-		roomHeadInfo = room;
+	private boolean exit;
+	public WorkThread(String host, int port, String name) { //工作线程
+		remoteHost = host;
+		this.port = port;
 		this.name = name;
+		this.exit = false;
 	}
 
 	public void setClientInterface(ClientInterface clientInterface) { //客户端接口参数
@@ -38,14 +42,13 @@ public class WorkThread extends Thread { //工作线程
 	public void run() {
 		try {
 			// 建立客户端Socket连接，指定服务器的位置以及端口
-			InetAddress address = InetAddress.getByName(roomHeadInfo.host);
-			socket = new Socket(address, roomHeadInfo.port);
+			InetAddress address = InetAddress.getByName(remoteHost);
+			socket = new Socket(address, port);
 
 			out = new ObjectOutputStream(socket.getOutputStream()); //OBject是对象，对象输出流
 			in = new ObjectInputStream(socket.getInputStream()); //对象输入流
 
-			boolean  exit = false; //出口为假
-			NetCommand in_cmd; //网络指挥官
+			NetCommand in_cmd;
 			while (!exit) {
 				try {
 					in_cmd = (NetCommand) in.readObject(); //读对象
@@ -67,7 +70,6 @@ public class WorkThread extends Thread { //工作线程
 				case ROOM_INFO:
 					room = (Room) in_cmd.getData();
 					System.out.println(room.toString());
-
 					break;
 				case MSG:
 					if(clientInterface != null)
@@ -76,8 +78,8 @@ public class WorkThread extends Thread { //工作线程
 					break;
 				case NEW_PLAYER:
 					Player p = (Player) in_cmd.getData();
-					if (sender == null)
-						player = p;
+					if(me == null)
+						me= p;
 					room.add(p);
 					System.out.println("New player join: " + p.getName());
 					if(clientInterface != null) {
@@ -94,8 +96,6 @@ public class WorkThread extends Thread { //工作线程
 				case TEAM_CHANGE:
 					Position position = (Position)in_cmd.getData();
 					room.movePlayer(sender.getId(), position.getType(), position.getIndex());
-					System.out.println(String.format("Player [%s] change team to [%s] position [%d]", sender.getName(),
-							position.getType().toString(), position.getIndex()));
 					if(clientInterface != null) {
 						clientInterface.roomRefreshed(room);
 					}
@@ -107,14 +107,15 @@ public class WorkThread extends Thread { //工作线程
 					}
 					break;
 				case KICK: //对应接口类型
-					Player player = (Player)in_cmd.getData();
-					room.remove(player.getId());
+					int kickedPlayerId = (int)in_cmd.getData();
+					room.remove(kickedPlayerId);
 					if(clientInterface != null) { //如果接口不为空
-						clientInterface.onPlayerKicked(player, room);
+						clientInterface.onPlayerKicked(me, room);
 					}
 					break;
 				case SELECT_ROLE:
-					room.synchronizePlayerRoleId(senderId, sender.getRoleId());
+					int roleId = (int)in_cmd.getData();
+					room.synchronizePlayerRoleId(senderId, roleId);
 					if(clientInterface != null) {
 						clientInterface.roomRefreshed(room);
 					}
@@ -127,8 +128,8 @@ public class WorkThread extends Thread { //工作线程
 				}
 			}
 			// 关闭资源
-			in.close();
-			out.close();
+			//in.close();
+			//out.close();
 			socket.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -147,15 +148,18 @@ public class WorkThread extends Thread { //工作线程
 			return;
 
 		NetCommand command = new NetCommand(Code.MSG);
-		command.setSender(player.getId());
+		command.setSender(me.getId());
 		command.setData(msg);
 		out.writeObject(command);
 	}
 	
 	public void sendRoleChanged(int role_id) {
+		if(me.getRoleId() == role_id)
+			return;
+		
 		NetCommand command = new NetCommand(Code.SELECT_ROLE);
-		player.setRoleId(role_id);
-		command.setSender(player.getId());
+		me.setRoleId(role_id);
+		command.setSender(me.getId());
 		command.setData(role_id);
 		try {
 			out.writeObject(command);
@@ -169,7 +173,7 @@ public class WorkThread extends Thread { //工作线程
 		boolean ret = false;
 		long seed = System.currentTimeMillis();//获取一个种子
 		NetCommand command = new NetCommand(Code.SEED); //命令
-		command.setSender(player.getId());//发送者
+		command.setSender(me.getId());//发送者
 		command.setData(seed);//数据
 		try {
 			out.writeObject(command);//写输出流
@@ -186,12 +190,13 @@ public class WorkThread extends Thread { //工作线程
 	}
 
 	public void sendKickCmd(Team.Type team, int index) { //踢人命令
-		boolean end = false;
+		Player playerToKick = getPlayer(team, index);
+		if(playerToKick == null)
+			return;
+		
 		NetCommand command = new NetCommand(Code.KICK);
-		command.setSender(player.getId());
-
-		Player _player = getPlayer(team, index);
-		command.setData(_player);
+		command.setSender(me.getId());
+		command.setData(playerToKick.getId());
 		try {
 			out.writeObject(command);//写输出流
 		} catch (IOException e) {
@@ -200,49 +205,58 @@ public class WorkThread extends Thread { //工作线程
 		}
 	}
 	
-	public void changeTeam(Team.Type type, int index) throws IOException {
+	public void changeTeam(Team.Type type, int index) {
 		if (out == null)
 			return;
 
 		NetCommand command = new NetCommand(Code.TEAM_CHANGE);
-		command.setSender(player.getId());
+		command.setSender(me.getId());
 		
 		Position position = new Position();//位置
 		position.setType(type);
 		position.setIndex(index);
 		command.setData(position);//发送的数据
-		out.writeObject(command);
+		try {
+			out.writeObject(command);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public Room getRoom() {
 		return room;
 	}
 
-	public void shutdown() throws IOException {
-		interrupt();
-
-		if (in != null) {
-			in.close();
-			in = null;
-		}
-		if (out != null) {
-			out.close();
-			out = null;
-		}
-		if (socket != null) {
-			socket.close();
-			socket = null;
+	public synchronized void shutdown() {
+		exit = true;
+		try {
+			if (in != null) {
+				in.close();
+				in = null;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	public void movePlayer(Team.Type type, int index) {
-		if(room==null || player==null)
+		if(room==null || me==null)
 			return;
 
 		try {
-			room.movePlayer(player.getId(), type, index);
+			room.movePlayer(me.getId(), type, index);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void close() {
+		shutdown();
+	}
+	
+	public int getMyId() {
+		return me.getId();
 	}
 }

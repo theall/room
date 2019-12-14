@@ -15,8 +15,10 @@ public class Room implements Serializable {
 	private String host;
 	private int port;
 	private long timeStamp;
+	private Player owner;
 
-	public Room() {
+	public Room(String name) {
+		owner = new Player(name);
 		blue = new Team(Team.Type.BLUE);
 		red = new Team(Team.Type.RED);
 	}
@@ -27,10 +29,6 @@ public class Room implements Serializable {
 
 	public void setMap(Map map) {
 		this.map = map;
-	}
-
-	public Room(String name) {
-		this.name = name;
 	}
 
 	public String getName() {
@@ -134,7 +132,8 @@ public class Room implements Serializable {
 		String[] array = s.split("\\|");
 		if (array.length != 5)
 			return null;
-		Room room = new Room();
+		
+		Room room = new Room("");
 		room.setHost(array[0]);
 		room.setPort(Integer.parseInt(array[1]));
 		room.setName(array[2]);
@@ -203,6 +202,14 @@ public class Room implements Serializable {
 		return null;
 	}
 	
+	public Player findPlayerByIndex(Team.Type teamType, int index) {
+		Player player = null;
+		Team team = teamType == Type.BLUE ? this.blue : red;
+		if(index>=0 && index<team.getCapacity())
+			player = team.getPlayer(index);
+		return player;
+	}
+	
 	public synchronized int createPlayerId() {
 		int id = 0;
 		while(true) {
@@ -221,5 +228,13 @@ public class Room implements Serializable {
 			team = red;
 		}
 		return team.getPlayer(index);
+	}
+	
+	public int getOwner() {
+		return owner.getId();
+	}
+
+	public void setOwner(Player owner) {
+		this.owner = owner;
 	}
 }

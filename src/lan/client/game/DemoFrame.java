@@ -4,9 +4,12 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
-import java.util.TimerTask;
 
 public class DemoFrame extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private MyThread myThread;
 	private Random random;
 

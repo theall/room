@@ -1,6 +1,7 @@
 package lan.server.thread;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -19,7 +20,9 @@ public class ListenThread extends Thread {
 		try {
 			boolean exit = false;
 			// 建立一个服务器Socket（ServerSocket）指定端口并开始监听
-			ServerSocket serverSocket = new ServerSocket(Utils.WORK_PORT);
+			ServerSocket serverSocket = new ServerSocket();
+			serverSocket.setReuseAddress(true);
+			serverSocket.bind(new InetSocketAddress(Utils.WORK_PORT));
 			System.out.println("Listening...");
 			while(!exit) {
 				// 使用accept()方法等待客户端触发通信

@@ -1,15 +1,10 @@
 package lan.client.gui.widget.list;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Vector;
 
-public class MyJList extends JList {
+import javax.swing.JList;
+
+public class MyJList extends JList<Object> {
     private static final long serialVersionUID = 1L;
     public MyJList() { //用函数封装了Jlist列表
 
@@ -25,11 +20,7 @@ public class MyJList extends JList {
         }
         setListData(iconTextList);
     }
-
-    public void setListData(ArrayList<Integer> iconList, Vector<String> textList) {
-
-    }
-
+    
     public void setListData(ArrayList<IconText> iconList) {
         ImageListModel model = new ImageListModel();
         ImageCellRender render = new ImageCellRender();

@@ -1,8 +1,7 @@
 package lan.client.game;
 
-import javax.swing.*;
-import java.awt.*;
-import java.net.URL;
+import java.awt.Graphics;
+import java.awt.Image;
 
 public class Demo {
 	private int x;
@@ -54,9 +53,6 @@ public class Demo {
 	private Image image;
 
 	public Demo() {
-		//URL imgURL = Demo.class.getResource("resources/test.jpg");
-		//this.image =  new ImageIcon("scr/resources/1.jpg").getImage();
-		this.image =new ImageIcon("src/resources/1.jpg").getImage();
 		this.width = 100;
 		this.height = 100;
 	}

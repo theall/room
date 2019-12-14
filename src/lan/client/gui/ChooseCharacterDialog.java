@@ -20,6 +20,7 @@ public class ChooseCharacterDialog extends JDialog {
     private int index;
     public ChooseCharacterDialog() {
     	setModal(true);
+    	
         for (int i = 0; i< ImageCellRender.getCharacterSize(); i++) {
             idList.add(i);
             nameList.add(String.valueOf(i));
@@ -38,10 +39,7 @@ public class ChooseCharacterDialog extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 index = list.getSelectedIndex();
                 if (index != -1) {                  //如果索引到不少于1次
-                    int clickCount = e.getClickCount();//点击计数
-                    if (clickCount == 2) {             //如果2次就进入
-                        setVisible(false);//点了俩次就直接退出
-                    }
+                	setVisible(false);//点了俩次就直接退出
                 }
             }
 

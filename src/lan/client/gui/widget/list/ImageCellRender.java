@@ -1,9 +1,10 @@
 package lan.client.gui.widget.list;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.im.InputContext;
+import java.awt.Component;
 import java.util.ArrayList;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
+import javax.swing.JList;
 
 public class ImageCellRender extends DefaultListCellRenderer {
     private static final long serialVersionUID = 1L;
@@ -24,6 +25,7 @@ public class ImageCellRender extends DefaultListCellRenderer {
             return null;
         return characters.get(id);
     }
+    
     public Component getListCellRendererComponent(JList<? extends Object> list,
                                                   Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -35,6 +37,7 @@ public class ImageCellRender extends DefaultListCellRenderer {
             if(icon != null)
                 setIcon(icon);
             setText(iconText.getText());
+            setForeground(iconText.getColor());
         }
         return this;
     }

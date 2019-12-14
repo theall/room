@@ -2,8 +2,8 @@ package lan.client.thread;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 
-import lan.client.Client;
 import lan.client.util.RoomUpdate;
 import lan.utils.Utils;
 
@@ -36,7 +36,9 @@ public class FindHostThread extends Thread { //寻找房间线程
 			System.out.println("Receiving broadcast...");
 			while (!exit) {
 				// 绑定端口的
-				ds = new DatagramSocket(port);
+				ds = new DatagramSocket(null);
+				ds.setReuseAddress(true);
+				ds.bind(new InetSocketAddress(port));
 				dp = new DatagramPacket(buf, buf.length);
 				ds.receive(dp);
 				ds.close();
@@ -67,7 +69,7 @@ public class FindHostThread extends Thread { //寻找房间线程
 				roomHeadList.add(roomHeadInfo);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 

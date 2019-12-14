@@ -1,16 +1,22 @@
 package lan.client.gui.widget.list;
 
-import lan.utils.Player;
-
-import javax.swing.*;
+import java.awt.Color;
 
 public class IconText { //封装图标和文本创建对象
     private int icon;
     private String text;
-    private Player player;
+    private Color color;
 
-    public IconText(int icon) {
+    public IconText() {
+        this.icon = 0;
+        this.color = Color.black;
+        this.text = "------------------";
+    }
+    
+	public IconText(int icon) {
         this.icon = icon;
+        this.text = "------------------";
+        this.color = Color.black;
     }
 
     public IconText(int icon, String text) {
@@ -34,4 +40,11 @@ public class IconText { //封装图标和文本创建对象
         this.text = text;
     }
 
+    public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
 }

@@ -2,47 +2,29 @@ package lan.server.thread;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
 
 import lan.utils.Room;
 import lan.utils.Utils;
 
 public class BroadcastThread extends Thread {
 	private Room room;//创建数据类为room的成员变量
-	public BroadcastThread(Room room) {
-		this.room = room;//将传递来的参数给成员变量room
+	
+	public BroadcastThread() {
+		
 	}
 
-	private String getLocalIpAddress() {//获取本机的ip地址
-		try {
-			Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
-			InetAddress ip = null;
-			while (allNetInterfaces.hasMoreElements()) {
-				NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
-				if (netInterface.isLoopback() || netInterface.isVirtual() || !netInterface.isUp()) {
-					continue;
-				} else {
-					Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
-					while (addresses.hasMoreElements()) {
-						ip = addresses.nextElement();
-						if (ip != null && ip instanceof Inet4Address) {
-							return ip.getHostAddress();
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			System.err.println("IP地址获取失败" + e.toString());
-		}
-		return "";
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
 	}
 
 	@Override
 	public void run() {
-		String localIp = getLocalIpAddress();//调用getLocalIpAddress来获取到本地的ip地址
+		String localIp = Utils.getLocalIpAddress();//调用getLocalIpAddress来获取到本地的ip地址
 		boolean exit = false;//给一个假数值
 		while (!exit) {
 			// 广播的实现 :由客户端发出广播，服务器端接收
@@ -58,7 +40,7 @@ public class BroadcastThread extends Thread {
 				sleep(1000);//设置延时，每秒广播
 				ds.close();//关闭传输
 			} catch (Exception e) {//异常处理
-				e.printStackTrace();///显示出程序从启动到异常的步骤
+				System.out.println("Broadcast thread closed.");
 				exit = true;//将条件赋真结束循环
 			}
 		}

@@ -4,6 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DemoPanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Demo demo;
 	
 	public DemoPanel(Demo demo) {

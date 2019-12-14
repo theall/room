@@ -1,5 +1,6 @@
 package lan.server.thread;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,7 +18,6 @@ public class WorkThread extends Thread {
 	private ObjectOutputStream outputStream;
 	private Room room;
 	private Player player;
-	private boolean exit;
 	private ThreadControl threadControl;
 
 	public WorkThread(Room room, Socket socket, ThreadControl threadControl) {
@@ -49,7 +49,7 @@ public class WorkThread extends Thread {
 			while (!exit) {
 				try {
 					command = (NetCommand) inputStream.readObject();
-				} catch (SocketException se) {
+				} catch (SocketException | EOFException se) {
 					System.out.println("Player leave: " + player.getName());
 					room.cmdRemove(player);
 					inputStream.close();
@@ -58,26 +58,27 @@ public class WorkThread extends Thread {
 				}
 				NetCommand out = new NetCommand(Code.NULL);
 				int senderId = command.getSender();
-				Player player = room.findPlayerById(senderId);
+				Player sender = room.findPlayerById(senderId);
 				switch (command.getCode()) {
 				case MSG: // forward to clients
-					System.out.println(player.getName() + ": " + (String) command.getData());
+					System.out.println(sender.getName() + ": " + (String) command.getData());
 					room.groupSend(command);
 					break;
 				case TEAM_CHANGE:
 					Position position = (Position)command.getData();
 					room.movePlayer(senderId, position.getType(), position.getIndex());
-					System.out.println(String.format("Player [%s] change team to [%s] position [%d]", player.getName(),
+					System.out.println(String.format("%s change team to [%s] position [%d]", sender.getName(),
 					position.getType().toString(), position.getIndex()));
 					room.groupSend(command);
 					break;
 				case KICK:
-					boolean check = isYou(player);
+					int playerIdToKick = (int)command.getData();
+					boolean check = isYou(playerIdToKick);
 					if(check == false) {
-						boolean detection = threadControl.remove(player);
+						boolean detection = threadControl.remove(playerIdToKick);
 						if(detection == true) {
 							NetCommand kickCmd = new NetCommand(Code.KICK);
-							kickCmd.setData(player);
+							kickCmd.setData(sender);
 							room.groupSend(kickCmd);
 							break;
 						}
@@ -89,8 +90,10 @@ public class WorkThread extends Thread {
 					int playerId = command.getSender();
 					int roleId = (Integer)command.getData();
 					room.synchronizePlayerRoleId(playerId, roleId);
-					System.out.println("server role id:" + roleId);
+					System.out.println(String.format("%s select role %d", sender.getName(), roleId));
 					room.groupSend(command);
+					break;
+				case CREATE_ROOM:
 					break;
 				default:
 					room.groupSend(command);
@@ -106,7 +109,6 @@ public class WorkThread extends Thread {
 	}
 	
 	public void close() {
-		exit = true;
 		try {
 			socket.close();
 		} catch (IOException e) {
@@ -115,8 +117,8 @@ public class WorkThread extends Thread {
 		}
 	}
 	
-	public boolean isYou(Player player) {
-		return this.player.getId() == player.getId();
+	public boolean isYou(int id) {
+		return this.player.getId() == id;
 	}
 
 	public void sendObject(Object object) {
