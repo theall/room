@@ -39,7 +39,8 @@ public class WorkThread extends Thread {
 				System.out.println("Fake, go away!");
 				return;
 			}
-			player = new Player((String) command.getData());
+			
+			player = new Player((String)command.getData());
 			player.setId(room.createPlayerId());
 			player.setOutputStream(outputStream);
 			room.cmdAdd(player);
@@ -92,6 +93,17 @@ public class WorkThread extends Thread {
 					room.synchronizePlayerRoleId(playerId, roleId);
 					System.out.println(String.format("%s select role %d", sender.getName(), roleId));
 					room.groupSend(command);
+					break;
+				case SET_OWNER:
+					if(room.getOwner() != senderId) {
+						return;
+					}
+					int newOwner = (int)command.getData();
+					Player player = room.findPlayerById(newOwner);
+					if(player != null) {
+						room.setOwner(newOwner);
+						room.groupSend(command);
+					}
 					break;
 				case CREATE_ROOM:
 					break;

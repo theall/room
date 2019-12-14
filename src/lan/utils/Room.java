@@ -15,10 +15,9 @@ public class Room implements Serializable {
 	private String host;
 	private int port;
 	private long timeStamp;
-	private Player owner;
+	private int owner;
 
 	public Room(String name) {
-		owner = new Player(name);
 		blue = new Team(Team.Type.BLUE);
 		red = new Team(Team.Type.RED);
 	}
@@ -160,6 +159,10 @@ public class Room implements Serializable {
 	}
 
 	public void cmdAdd(Player player) throws IOException {
+		int playerCount = getPlayers().size();
+		if(playerCount == 0)
+			owner = player.getId();
+		
 		// syn room infor to this player
 		NetCommand command = new NetCommand(NetCommand.Code.ROOM_INFO);
 		command.setData((Room) this);
@@ -231,10 +234,10 @@ public class Room implements Serializable {
 	}
 	
 	public int getOwner() {
-		return owner.getId();
+		return owner;
 	}
 
-	public void setOwner(Player owner) {
+	public void setOwner(int owner) {
 		this.owner = owner;
 	}
 }

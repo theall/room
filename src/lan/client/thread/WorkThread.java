@@ -120,6 +120,13 @@ public class WorkThread extends Thread { //工作线程
 						clientInterface.roomRefreshed(room);
 					}
 					break;
+				case SET_OWNER:
+					int newOwner = (int)in_cmd.getData();
+					room.setOwner(newOwner);
+					if(clientInterface != null) {
+						clientInterface.onOwerReset(newOwner, room);
+					}
+					break;
 				default:
 					break;
 				}
@@ -143,30 +150,21 @@ public class WorkThread extends Thread { //工作线程
 		}
 	}
 
-	public void sendMessage(String msg) throws IOException {//发送消息通知服务器
+	public void sendMessage(String msg) {//发送消息通知服务器
 		if (out == null)
 			return;
 
 		NetCommand command = new NetCommand(Code.MSG);
 		command.setSender(me.getId());
 		command.setData(msg);
-		out.writeObject(command);
+		sendCommand(command);
 	}
 	
 	public void sendRoleChanged(int role_id) {
 		if(me.getRoleId() == role_id)
 			return;
 		
-		NetCommand command = new NetCommand(Code.SELECT_ROLE);
-		me.setRoleId(role_id);
-		command.setSender(me.getId());
-		command.setData(role_id);
-		try {
-			out.writeObject(command);
-		} catch (IOException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		}//写输出流
+		sendCmdWithInt(Code.SELECT_ROLE, role_id);
 	}
 
 	public boolean sendSeed() {//这里是在线程中写了一个方法通知服务器启动游戏
@@ -175,13 +173,7 @@ public class WorkThread extends Thread { //工作线程
 		NetCommand command = new NetCommand(Code.SEED); //命令
 		command.setSender(me.getId());//发送者
 		command.setData(seed);//数据
-		try {
-			out.writeObject(command);//写输出流
-			ret = true;
-		} catch (IOException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		}
+		sendCommand(command);
 		return ret;
 	}
 
@@ -194,15 +186,22 @@ public class WorkThread extends Thread { //工作线程
 		if(playerToKick == null)
 			return;
 		
-		NetCommand command = new NetCommand(Code.KICK);
+		sendCmdWithInt(Code.KICK, playerToKick.getId());
+	}
+	
+	public void sendTransistOwner(Team.Type team, int index) { //踢人命令
+		Player p = getPlayer(team, index);
+		if(p == null)
+			return;
+		
+		sendCmdWithInt(Code.SET_OWNER, p.getId());
+	}
+	
+	private void sendCmdWithInt(Code code, int data) {
+		NetCommand command = new NetCommand(code);
 		command.setSender(me.getId());
-		command.setData(playerToKick.getId());
-		try {
-			out.writeObject(command);//写输出流
-		} catch (IOException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		}
+		command.setData(data);
+		sendCommand(command);
 	}
 	
 	public void changeTeam(Team.Type type, int index) {
@@ -216,14 +215,18 @@ public class WorkThread extends Thread { //工作线程
 		position.setType(type);
 		position.setIndex(index);
 		command.setData(position);//发送的数据
+		sendCommand(command);
+	}
+
+	private void sendCommand(NetCommand netCommand) {
 		try {
-			out.writeObject(command);
+			out.writeObject(netCommand);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	
 	public Room getRoom() {
 		return room;
 	}

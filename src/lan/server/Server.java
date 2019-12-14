@@ -47,11 +47,11 @@ public class Server {
 		this.serverRunMode = serverRunMode;
 	}
 	
-	public Room createBroadcastRoom(String name) {
-		Room room = createRoom(name);
+	public void broadcastRoom(Room room) {
 		workThreadManager.setRoom(room);
 		broadcastThread.setRoom(room);
-		return room;
+		broadcastThread.start();
+		System.out.println("Broadcast thread started");
 	}
 	
 	public Room createRoom(String name) {
@@ -63,11 +63,6 @@ public class Server {
 	public void start() {
 		listenThread.start();
 		System.out.println("Woking thread started");
-		
-		if(serverRunMode == ServerRunMode.LAN) {
-			broadcastThread.start();
-			System.out.println("Broadcast thread started");
-		}	
 	}
 
 	public void shutdown() {

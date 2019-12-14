@@ -20,7 +20,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -129,7 +128,7 @@ public class RoomDetail extends JDialog implements
     private void initPopMenu() {
         popupMenu = new JPopupMenu();//在方法中拿到JPopupMenu类的对象
         menuKick = new JMenuItem("踢出");//菜单列表
-        menuSetOwner = new JMenuItem("房主");//菜单列表
+        menuSetOwner = new JMenuItem("转移房主");//菜单列表
         popupMenu.add(menuKick);//跟jPanel一样先注册在绘制
         popupMenu.addSeparator();//分割线
         popupMenu.add(menuSetOwner);
@@ -250,39 +249,35 @@ public class RoomDetail extends JDialog implements
     public void actionPerformed(ActionEvent e) {
         Object object = e.getSource();
         if(object instanceof JButton) {
-            try {
-                JButton button = (JButton)object;
-                if (button == btnStart) {
-                    // 开始游戏
-                    boolean seedSend = workThread.sendSeed();
-                    if (seedSend)  //种子发送
-                        btnStart.setEnabled(false);//启动为假
-                } else if (button == btnSend) {
-                    String constent = txtSend.getText();
-                    workThread.sendMessage(constent); // 这里是接受消息
-                } else if (button == btnChoosePlayer) {
-                	ChooseCharacterDialog dialog = new ChooseCharacterDialog();
-                	dialog.setLocationRelativeTo(btnStart);
-                	dialog.setVisible(true);//如果按钮不为空就启动选人界面
-                    int role_id = dialog.getRoleId();
-                    workThread.sendRoleChanged(role_id);
-                }
-                return;
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            JButton button = (JButton)object;
+			if (button == btnStart) {
+			    // 开始游戏
+			    boolean seedSend = workThread.sendSeed();
+			    if (seedSend)  //种子发送
+			        btnStart.setEnabled(false);//启动为假
+			} else if (button == btnSend) {
+			    String constent = txtSend.getText();
+			    workThread.sendMessage(constent); // 这里是接受消息
+			} else if (button == btnChoosePlayer) {
+				ChooseCharacterDialog dialog = new ChooseCharacterDialog();
+				dialog.setLocationRelativeTo(btnStart);
+				dialog.setVisible(true);//如果按钮不为空就启动选人界面
+			    int role_id = dialog.getRoleId();
+			    workThread.sendRoleChanged(role_id);
+			}
         } else if(object instanceof JMenuItem) {
             JMenuItem menuItem = (JMenuItem) e.getSource();
+            MyJList list = (MyJList) popupMenu.getInvoker();
+            Team.Type teamType;
+            int index = list.getSelectedIndex();
+            if (list == listRed)
+                teamType = Team.Type.RED;
+            else
+                teamType = Team.Type.BLUE;
             if (menuItem == menuKick) { //如果点击的是踢人就发送
-                MyJList list = (MyJList) popupMenu.getInvoker();
-                Team.Type teamType;
-                int index = list.getSelectedIndex();
-                if (list == listRed)
-                    teamType = Team.Type.RED;
-                else
-                    teamType = Team.Type.BLUE;
-
                 workThread.sendKickCmd(teamType, index);//调用工作线程将要踢掉的人发送出去
+            } else if(menuItem == menuSetOwner) {
+            	workThread.sendTransistOwner(teamType, index);
             }
         }
     }
@@ -341,6 +336,17 @@ public class RoomDetail extends JDialog implements
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onOwerReset(int newOwner, Room room) {
+		// TODO Auto-generated method stub
+		Player player = room.findPlayerById(newOwner);
+		if(player == null)
+			return;
+		
+		roomRefreshed(room);
+		addMsg(player.getName() + " 成为新的房主.");
 	}
 }
 

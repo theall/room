@@ -1,6 +1,7 @@
 package lan.client.gui;
 
 import lan.server.Server;
+import lan.utils.Room;
 import lan.utils.Utils;
 import lan.client.thread.FindHostThread;
 import lan.client.thread.RoomHeadInfo;
@@ -99,12 +100,13 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
 			// Create room
 			String name = txtName.getText();
 			localServer = new Server();
-			localServer.createBroadcastRoom(name);
+			Room room = localServer.createRoom(name);
 			localServer.start();
+			localServer.broadcastRoom(room);
 			
 			String serverHost = localServer.getHost();
 			RoomDetail roomDetail = new RoomDetail(serverHost, Utils.WORK_PORT, name); //这里是在战斗界面给对象然后给参数
-            roomDetail.setVisible(true);
+			roomDetail.setVisible(true);
             localServer.shutdown();
 		}
 	}
