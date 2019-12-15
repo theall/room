@@ -77,13 +77,13 @@ public class WorkThread extends Thread { //工作线程
 					System.out.println(String.format("%s: %s", sender.getName(), (String) in_cmd.getData()));
 					break;
 				case NEW_PLAYER:
-					Player p = (Player) in_cmd.getData();
+					Player p = (Player) in_cmd.getData();//创建玩家P如果me是空的就在房间创建1个人
 					if(me == null)
 						me= p;
 					room.add(p);
 					System.out.println("New player join: " + p.getName());
 					if(clientInterface != null) {
-						clientInterface.roomRefreshed(room);
+						clientInterface.onPlayersEnter(p,room);//P是玩家
 					}
 					break;
 				case LEAVE:

@@ -17,6 +17,7 @@ public class Room implements Serializable {
 	private long timeStamp;
 	private int owner;
 
+
 	public Room(String name) {
 		blue = new Team(Team.Type.BLUE);
 		red = new Team(Team.Type.RED);
@@ -240,4 +241,5 @@ public class Room implements Serializable {
 	public void setOwner(int owner) {
 		this.owner = owner;
 	}
+
 }

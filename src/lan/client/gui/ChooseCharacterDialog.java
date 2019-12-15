@@ -27,7 +27,7 @@ public class ChooseCharacterDialog extends JDialog {
         }
         list.setListData(idList, nameList);
 
-        //将JList放在滚动面板上
+        //将List放在滚动面板上
         JScrollPane scrollPane = new JScrollPane(list);
         add(scrollPane);
         getContentPane().add(scrollPane, BorderLayout.CENTER);//中心

@@ -25,16 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class RoomDetail extends JDialog implements
         ClientInterface,
@@ -47,7 +38,7 @@ public class RoomDetail extends JDialog implements
     private static final long serialVersionUID = 1L;
     // 这里我设置的绘制区域需要调用的函数名
     private JPanel panel;
-    private JTextArea txtContent;
+    private JTextArea txtContent;//打字框
     private JLabel lblName, lblSend;//文本标签
     private JTextField txtSend;
     private JButton btnSend;
@@ -58,7 +49,8 @@ public class RoomDetail extends JDialog implements
     private JButton btnChoosePlayer;//定义选人按钮
     private MyJList listBlue; // 定义房间界面变量方便后面调用
     private MyJList listRed;
-    
+    private JScrollPane scrollPane;
+
     private int roomOwnerId = -1;
     private WorkThread workThread; // 工作线程
 
@@ -77,11 +69,11 @@ public class RoomDetail extends JDialog implements
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setSize(680, 460);
         setLocation(400, 240);
-
         listBlue = createList();
         listRed = createList();
 
-        txtContent = new JTextArea();
+        scrollPane = new JScrollPane(txtContent);
+        txtContent = new JTextArea(20,50);//组件大小
         // 设置文本域只读
         txtContent.setEditable(false);// 设置可编辑为假
         lblSend = new JLabel("发言:"); // 发言文本
@@ -89,7 +81,7 @@ public class RoomDetail extends JDialog implements
         btnSend = new JButton("发送");// 按钮
         btnSend.setMnemonic(java.awt.event.KeyEvent.VK_ENTER);
         btnStart = new JButton("开始游戏");
-        lblName = new JLabel("队伍列表");//创建了一个文本标签
+        lblName  = new JLabel("队伍列表");//创建了一个文本标签
         btnChoosePlayer = new JButton("选择角色");
 
         panel = new JPanel(); // new绘制对象出来
@@ -99,12 +91,14 @@ public class RoomDetail extends JDialog implements
         panel.add(btnStart);// 绘制一个开始按钮
         panel.add(lblName);//绘制头顶列表信息
         panel.add(btnChoosePlayer);
+        panel.add(scrollPane);
 
         this.add(panel, BorderLayout.SOUTH); // 对话框跟队伍的位置，南边 BorderLayout边框布局
         this.add(listBlue, BorderLayout.WEST);// 队伍在左边函数 ，WEST西边
         this.add(listRed, BorderLayout.EAST);// 东边
         this.add(lblName, BorderLayout.NORTH);//北边，也就是置顶
-        add(txtContent, BorderLayout.CENTER); // 中心
+        this.add(scrollPane,BorderLayout.CENTER);//scrollPane就是一个容器
+        this.scrollPane.setViewportView(txtContent);//显示容器中的文本框
 
         loadIcons();
 
@@ -168,7 +162,7 @@ public class RoomDetail extends JDialog implements
         if (room == null) // 如果房间为空就返回空
             return;
 
-        roomOwnerId = room.getOwner();
+        roomOwnerId = room.getOwner();//这里是在房间里拿到了房主的ID
         setTeamToList(room.getBlue(), listBlue); // 调用方法同步名字
         setTeamToList(room.getRed(), listRed); // 房间名字同步到了列表中
     }
@@ -341,12 +335,20 @@ public class RoomDetail extends JDialog implements
 	@Override
 	public void onOwerReset(int newOwner, Room room) {
 		// TODO Auto-generated method stub
-		Player player = room.findPlayerById(newOwner);
+		Player player = room.findPlayerById(newOwner);//把房主传到玩家中然后刷新出来
 		if(player == null)
 			return;
 		
 		roomRefreshed(room);
-		addMsg(player.getName() + " 成为新的房主.");
+		addMsg(player.getName() + " 成为新的房主.");//界面输入
 	}
+
+    @Override
+    public void onPlayersEnter(Player player,Room room) {//在接口中传入需要的Player room
+        if (room == null) // 如果房间为空就返回空
+            return;
+        roomRefreshed(room);//刷新房间信息
+        addMsg(player.getName() + " 玩家加入战斗");
+    }
 }
 

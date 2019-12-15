@@ -51,7 +51,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
         listRooms.addMouseListener(this);
         lblName = new JLabel("昵称:");
         txtName = new JTextField(getRandomName(), 5);//这里用法是一个长度为int5的文本框 //随机名字
-        btnCreateRoom = new JButton();
+        btnCreateRoom = new JButton();//创建房间按钮
         btnCreateRoom.setText("Create");
         btnCreateRoom.addActionListener(this);
         
