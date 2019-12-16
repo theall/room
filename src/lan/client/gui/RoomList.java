@@ -45,7 +45,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
         setTitle("房间列表");
         setSize(480, 360);
         setLocation(400, 240);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //添加关闭动作
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //添加关闭动作
         
         listRooms = new JList<String>();//new出对象
         listRooms.addMouseListener(this);
@@ -92,7 +92,6 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
         setRoom(roomHeadList); //调用方法然后显示列表
     }
 
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -105,9 +104,11 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
 			localServer.broadcastRoom(room);
 			
 			String serverHost = localServer.getHost();
+			setVisible(false);
 			RoomDetail roomDetail = new RoomDetail(serverHost, Utils.WORK_PORT, name); //这里是在战斗界面给对象然后给参数
 			roomDetail.setVisible(true);
             localServer.shutdown();
+            setVisible(true);
 		}
 	}
 	
@@ -121,8 +122,10 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
                 return;
             }
             RoomHeadInfo roomHeadInfo = findThread.getRoom(index); //查找线程
+            setVisible(false);
             RoomDetail roomDetail = new RoomDetail(roomHeadInfo.host, roomHeadInfo.port, name); //这里是在战斗界面给对象然后给参数
             roomDetail.setVisible(true);
+            setVisible(true);
         }
 	}
 
@@ -164,7 +167,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		System.exit(0);
+
 	}
 
 	@Override

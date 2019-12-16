@@ -83,7 +83,7 @@ public class WorkThread extends Thread { //工作线程
 					room.add(p);
 					System.out.println("New player join: " + p.getName());
 					if(clientInterface != null) {
-						clientInterface.onPlayersEnter(p,room);//P是玩家
+						clientInterface.onPlayerEnter(p,room);//P是玩家
 					}
 					break;
 				case LEAVE:
