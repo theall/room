@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: 0.0.0.{build}
 skip_tags: true
 build_script:
 - cmd: build.bat
@@ -10,3 +10,11 @@ deploy:
   auth_token:
     secure: crzVFlTyFurgbVImysXO1iQMlguXxkrJHgHoK0M9nkf5d2dboy1bGS4OwENIPT69
   artifact: /.+\.jar/
+notifications:
+- provider: Email
+  to:
+  - wazcd_1608@qq.com
+  subject: Build status of Room
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: false
