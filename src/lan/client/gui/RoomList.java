@@ -92,6 +92,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
         setRoom(roomHeadList); //调用方法然后显示列表
     }
 
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -105,7 +106,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
 			
 			String serverHost = localServer.getHost();
 			setVisible(false);
-			RoomDetail roomDetail = new RoomDetail(serverHost, Utils.WORK_PORT, name); //这里是在战斗界面给对象然后给参数
+			RoomDetail roomDetail = new RoomDetail(serverHost, Utils.WORK_PORT, name, true,true); //这里是在战斗界面给对象然后给参数
 			roomDetail.setVisible(true);
             localServer.shutdown();
             setVisible(true);
@@ -113,7 +114,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked(MouseEvent e) {//双击进入房间
 		int index = listRooms.getSelectedIndex(); //定义了索引，list选择索引，也就是在list当中点点点
         if (index != -1) {                  //如果索引到不少于1次
             String name = txtName.getText();//点了俩次以后房间名字同步
@@ -123,7 +124,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
             }
             RoomHeadInfo roomHeadInfo = findThread.getRoom(index); //查找线程
             setVisible(false);
-            RoomDetail roomDetail = new RoomDetail(roomHeadInfo.host, roomHeadInfo.port, name); //这里是在战斗界面给对象然后给参数
+            RoomDetail roomDetail = new RoomDetail(roomHeadInfo.host, roomHeadInfo.port, name, false,false); //这里是在战斗界面给对象然后给参数
             roomDetail.setVisible(true);
             setVisible(true);
         }

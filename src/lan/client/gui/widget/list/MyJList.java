@@ -7,7 +7,6 @@ import javax.swing.SwingUtilities;
 
 public class MyJList extends JList<Object> {
     private static final long serialVersionUID = 1L;
-    
     public MyJList() { //用函数封装了Jlist列表
     	setCellRenderer(new ImageCellRender());
     }

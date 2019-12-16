@@ -262,4 +262,11 @@ public class WorkThread extends Thread { //工作线程
 	public int getMyId() {
 		return me.getId();
 	}
+
+	public boolean imOwner() {
+		return me.getId()==room.getOwner();
+	}
+	public boolean statu() {
+		return me.getId()==room.getOwner();
+	}
 }
