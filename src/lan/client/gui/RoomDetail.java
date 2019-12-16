@@ -53,10 +53,10 @@ public class RoomDetail extends JDialog
     private int roomOwnerId = -1;
     private WorkThread workThread; // 工作线程
 
-    public RoomDetail(String host, int port, String name, boolean imOwner,boolean statu) { // 客户端图形界面
+    public RoomDetail(String host, int port, String name, boolean imOwner) { // 客户端图形界面
     	initialize();
     	setButtonStartText(imOwner);
-        setPopupMenuStatu(statu);
+        setPopupMenuStatus(imOwner);
 
 		workThread = new WorkThread(host, port, name);
 		workThread.setClientInterface(this);
@@ -350,8 +350,8 @@ public class RoomDetail extends JDialog
 		Player player = room.findPlayerById(newOwner);// 把房主传到玩家中然后刷新出来
 		if (player == null)
 			return;
-        setPopupMenuStatu(workThread.imOwner());//调用函数进行判断刷新
-        setButtonStartText(workThread.statu());//调用函数进行判断刷新
+        setPopupMenuStatus(workThread.imOwner());//调用函数进行判断刷新
+        setButtonStartText(workThread.imOwner());//调用函数进行判断刷新
 		roomRefreshed(room);
 		addMsg(player.getName() + " 成为新的房主.");// 界面输入
 	}
@@ -372,8 +372,8 @@ public class RoomDetail extends JDialog
             btnStart.setText("准备游戏");
 
     }
-    private void setPopupMenuStatu(boolean statu) {
-        if(statu){
+    private void setPopupMenuStatus(boolean status) {
+        if(status){
             menuKick.setEnabled(true);
             menuSetOwner.setEnabled(true);
         }
@@ -384,7 +384,7 @@ public class RoomDetail extends JDialog
 
     }
 
- @Override
+    @Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 

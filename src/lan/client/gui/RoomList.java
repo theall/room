@@ -106,7 +106,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
 			
 			String serverHost = localServer.getHost();
 			setVisible(false);
-			RoomDetail roomDetail = new RoomDetail(serverHost, Utils.WORK_PORT, name, true,true); //这里是在战斗界面给对象然后给参数
+			RoomDetail roomDetail = new RoomDetail(serverHost, Utils.WORK_PORT, name, true); //这里是在战斗界面给对象然后给参数
 			roomDetail.setVisible(true);
             localServer.shutdown();
             setVisible(true);
@@ -124,7 +124,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
             }
             RoomHeadInfo roomHeadInfo = findThread.getRoom(index); //查找线程
             setVisible(false);
-            RoomDetail roomDetail = new RoomDetail(roomHeadInfo.host, roomHeadInfo.port, name, false,false); //这里是在战斗界面给对象然后给参数
+            RoomDetail roomDetail = new RoomDetail(roomHeadInfo.host, roomHeadInfo.port, name, false); //这里是在战斗界面给对象然后给参数
             roomDetail.setVisible(true);
             setVisible(true);
         }
