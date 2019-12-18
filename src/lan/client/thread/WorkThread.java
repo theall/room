@@ -100,6 +100,13 @@ public class WorkThread extends Thread { //工作线程
 						clientInterface.roomRefreshed(room);
 					}
 					break;
+				case READY:
+					boolean isReady = (boolean)in_cmd.getData();
+					room.setPlayerState(senderId, isReady);
+					if(clientInterface != null) {
+						clientInterface.onPlayerReadyStateChanged(senderId, isReady);
+					}
+					break;
 				case SEED:
 					long seed = (long)in_cmd.getData();
 					if(clientInterface != null) {
@@ -167,13 +174,13 @@ public class WorkThread extends Thread { //工作线程
 		sendCmdWithInt(Code.SELECT_ROLE, role_id);
 	}
 
-	public boolean sendSeed() {//这里是在线程中写了一个方法通知服务器启动游戏
+	public boolean sendReadyCmd(boolean isReady) {//这里是在线程中写了一个方法通知服务器启动游戏
 		boolean ret = false;
-		long seed = System.currentTimeMillis();//获取一个种子
-		NetCommand command = new NetCommand(Code.SEED); //命令
+		NetCommand command = new NetCommand(Code.READY); //命令
 		command.setSender(me.getId());//发送者
-		command.setData(seed);//数据
+		command.setData(isReady);
 		sendCommand(command);
+		ret = true;
 		return ret;
 	}
 
@@ -181,6 +188,10 @@ public class WorkThread extends Thread { //工作线程
 		return room.getPlayer(teamType, index);
 	}
 
+	public Player getMe() {
+		return me;
+	}
+	
 	public void sendKickCmd(Team.Type team, int index) { //踢人命令
 		Player playerToKick = getPlayer(team, index);
 		if(playerToKick == null)

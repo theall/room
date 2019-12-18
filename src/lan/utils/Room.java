@@ -127,6 +127,12 @@ public class Room implements Serializable {
 			getRed().add(player);
 		}
 	}
+	
+	public synchronized void setPlayerState(int playerId, boolean isReady) {		
+		Player p = findPlayerById(playerId);
+		if(p != null)
+			p.setReady(isReady);
+	}
 
 	public static Room parse(String s) {
 		String[] array = s.split("\\|");
@@ -240,6 +246,16 @@ public class Room implements Serializable {
 
 	public void setOwner(int owner) {
 		this.owner = owner;
+	}
+	
+	public boolean isAllReady() {
+		for(Player player : getPlayers()) {
+			if(player.getId() == owner)
+				continue;
+			if(!player.isReady())
+				return false;
+		}
+		return true;
 	}
 
 }

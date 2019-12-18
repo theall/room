@@ -55,6 +55,8 @@ public class RoomDetail extends JDialog
 
     public RoomDetail(String host, int port, String name, boolean imOwner) { // 客户端图形界面
     	initialize();
+    	btnStart.setEnabled(!imOwner);
+    	
     	setButtonStartText(imOwner);
         setPopupMenuStatus(imOwner);
 
@@ -166,8 +168,7 @@ public class RoomDetail extends JDialog
             return;
 
         roomOwnerId = room.getOwner();//这里是在房间里拿到了房主的ID
-        setTeamToList(room.getBlue(), listBlue); // 调用方法同步名字
-        setTeamToList(room.getRed(), listRed); // 房间名字同步到了列表中
+        updateRoomInfoToGui();
     }
 
     private void setTeamToList(Team team, MyJList list) { // 封装函数
@@ -178,7 +179,8 @@ public class RoomDetail extends JDialog
             IconText iconText = new IconText();
             
             if (player != null) { // 如果列表玩家为空
-                iconText.setText(player.getName());
+            	String readyStr = player.isReady()?"(Ready)":"";
+                iconText.setText(player.getName() + readyStr);
                 iconText.setIcon(player.getRoleId());
                 
                 int playerId = player.getId();
@@ -257,13 +259,10 @@ public class RoomDetail extends JDialog
         if (object instanceof JButton) {
             JButton button = (JButton) object;
 			if (button == btnStart) {
-			    // 开始游戏
-			    boolean seedSend = workThread.sendSeed();
-			    if (seedSend) // 种子发送
-			        btnStart.setEnabled(false);// 启动为假
+				Player me = workThread.getMe();
+				workThread.sendReadyCmd(!me.isReady());
 			} else if (button == btnSend) {
 				sendContentToServer();
-			  
 			} else if (button == btnChoosePlayer) {
 				ChooseCharacterDialog dialog = new ChooseCharacterDialog();
 				dialog.setLocationRelativeTo(btnStart);
@@ -402,5 +401,32 @@ public class RoomDetail extends JDialog
     public void keyReleased(KeyEvent e) {
 
     }
+
+	@Override
+	public void onPlayerReadyStateChanged(int playerId, boolean isReady) {
+		Room room = workThread.getRoom();
+		if(room == null)
+			return;
+		
+		Player player = room.findPlayerById(playerId);
+        if(player == null)
+        	return;
+        
+        player.setReady(isReady);
+        updateRoomInfoToGui();
+        
+        boolean isMe = playerId == workThread.getMyId();
+        if(isMe)
+        	btnStart.setText(isReady?"Cancel":"Ready");
+        
+        if(workThread.imOwner())
+        	btnStart.setEnabled(room.isAllReady());
+	}
+	
+	private void updateRoomInfoToGui() {
+		Room room = workThread.getRoom();
+		setTeamToList(room.getBlue(), listBlue); // 调用方法同步名字
+        setTeamToList(room.getRed(), listRed); // 房间名字同步到了列表中
+	}
 }
 

@@ -10,4 +10,5 @@ public interface ClientInterface { //客户端接口
     void onOwerReset(int newOwner, Room room);//房主转移了
     void roomRefreshed(Room room);
     void onPlayerEnter(Player player, Room room);//玩家进入接口
+    void onPlayerReadyStateChanged(int playerId, boolean isReady);
 }

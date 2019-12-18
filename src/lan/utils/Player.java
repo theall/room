@@ -21,6 +21,7 @@ public class Player implements Serializable {
 		this.name = name;
 		type = Type.NULL;
 		id = -1;
+		ready = false;
 	}
 
 	public void reset() {

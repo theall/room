@@ -72,6 +72,22 @@ public class WorkThread extends Thread {
 					position.getType().toString(), position.getIndex()));
 					room.groupSend(command);
 					break;
+				case READY:
+					boolean isReady= (boolean)command.getData();
+					if(senderId == room.getOwner()) {
+						sender.setReady(isReady);
+						boolean areYouReady = room.isAllReady();
+						if(areYouReady) {
+							long seed = System.currentTimeMillis();
+							NetCommand seedForward = new NetCommand(Code.SEED);
+							seedForward.setData(seed);
+							room.groupSend(seedForward);
+						}
+					}else {
+						sender.setReady(true);
+						room.groupSend(command);
+					}
+					break;
 				case KICK:
 					int playerIdToKick = (int)command.getData();
 					boolean check = isYou(playerIdToKick);
@@ -142,5 +158,10 @@ public class WorkThread extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public boolean isReady() {
+		// TODO 自动生成的方法存根
+		return player.isReady();
 	}
 }
