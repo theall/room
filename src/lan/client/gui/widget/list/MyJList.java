@@ -30,7 +30,7 @@ public class MyJList extends JList<Object> {
                     model.addElement(icon);
                 }
                 setModel(model); //ÈÝÆ÷
-            }  
+            }
         });
     }
 

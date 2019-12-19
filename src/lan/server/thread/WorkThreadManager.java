@@ -44,8 +44,9 @@ public class WorkThreadManager implements ThreadControl {
 	public boolean remove(int playerId) {
 		// TODO 自动生成的方法存根
 		for( int i = 0 ; i < thread_pool.size() ; i++) {
-			if((thread_pool.get(i)).getId() == playerId) {
-				(thread_pool.get(i)).close();
+			WorkThread workThread = thread_pool.get(i);
+			if(workThread.getPlayerId() == playerId) {
+				workThread.close();
 				return true;
 			}
 		}

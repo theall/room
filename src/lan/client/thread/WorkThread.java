@@ -48,15 +48,17 @@ public class WorkThread extends Thread { //工作线程
 			out = new ObjectOutputStream(socket.getOutputStream()); //OBject是对象，对象输出流
 			in = new ObjectInputStream(socket.getInputStream()); //对象输入流
 
-			NetCommand in_cmd;
+			NetCommand in_cmd = null;
 			while (!exit) {
 				try {
 					in_cmd = (NetCommand) in.readObject(); //读对象
 				} catch (SocketException se) {
-					System.out.println("Server shutdown, exit!");
+					System.out.println("Socket closed!");
+					exit = true;
 					break;
 				} catch (IOException e) {
 					System.out.println("Io error, exit!");
+					exit = true;
 					break;
 				}
 				NetCommand out_cmd = new NetCommand();
@@ -79,25 +81,32 @@ public class WorkThread extends Thread { //工作线程
 				case NEW_PLAYER:
 					Player p = (Player) in_cmd.getData();//创建玩家P如果me是空的就在房间创建1个人
 					if(me == null)
-						me= p;
+						me = p;
 					room.add(p);
 					System.out.println("New player join: " + p.getName());
 					if(clientInterface != null) {
-						clientInterface.onPlayerEnter(p,room);//P是玩家
+						clientInterface.onPlayerEnter(p.getId());//P是玩家
 					}
 					break;
 				case LEAVE:
-					room.remove(sender.getId());
+					// The leave command is sent by server
+					int playerId = (int)in_cmd.getData();
+					Player player = room.findPlayerById(playerId);
+					if(player == null) {
+						// It has been kicked
+						break;
+					}
+					room.remove(playerId);
 					System.out.println("Player leave: " + sender.getName());
 					if(clientInterface != null) {
-						clientInterface.roomRefreshed(room);
+						clientInterface.onPlayerLeave(player);
 					}
 					break;
 				case TEAM_CHANGE:
 					Position position = (Position)in_cmd.getData();
 					room.movePlayer(sender.getId(), position.getType(), position.getIndex());
 					if(clientInterface != null) {
-						clientInterface.roomRefreshed(room);
+						clientInterface.refreshRoom();
 					}
 					break;
 				case READY:
@@ -113,25 +122,26 @@ public class WorkThread extends Thread { //工作线程
 						clientInterface.onSeed(seed);
 					}
 					break;
-				case KICK: //对应接口类型
+				case KICK:
 					int kickedPlayerId = (int)in_cmd.getData();
+					Player playerBeenKicked = room.findPlayerById(kickedPlayerId);
 					room.remove(kickedPlayerId);
 					if(clientInterface != null) { //如果接口不为空
-						clientInterface.onPlayerKicked(me, room);
+						clientInterface.onPlayerKicked(playerBeenKicked);
 					}
 					break;
 				case SELECT_ROLE:
 					int roleId = (int)in_cmd.getData();
 					room.synchronizePlayerRoleId(senderId, roleId);
 					if(clientInterface != null) {
-						clientInterface.roomRefreshed(room);
+						clientInterface.refreshRoom();
 					}
 					break;
 				case SET_OWNER:
 					int newOwner = (int)in_cmd.getData();
 					room.setOwner(newOwner);
 					if(clientInterface != null) {
-						clientInterface.onOwerReset(newOwner, room);
+						clientInterface.onOwerReset(newOwner);
 					}
 					break;
 				default:
@@ -141,10 +151,6 @@ public class WorkThread extends Thread { //工作线程
 					out.writeObject(out_cmd);
 				}
 			}
-			// 关闭资源
-			//in.close();
-			//out.close();
-			socket.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -155,6 +161,9 @@ public class WorkThread extends Thread { //工作线程
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		if(clientInterface != null)
+			clientInterface.workThreadExit();
 	}
 
 	public void sendMessage(String msg) {//发送消息通知服务器
@@ -174,20 +183,21 @@ public class WorkThread extends Thread { //工作线程
 		sendCmdWithInt(Code.SELECT_ROLE, role_id);
 	}
 
-	public boolean sendReadyCmd(boolean isReady) {//这里是在线程中写了一个方法通知服务器启动游戏
-		boolean ret = false;
+	public void sendReadyCmd(boolean isReady) {//这里是在线程中写了一个方法通知服务器启动游戏
 		NetCommand command = new NetCommand(Code.READY); //命令
 		command.setSender(me.getId());//发送者
 		command.setData(isReady);
 		sendCommand(command);
-		ret = true;
-		return ret;
 	}
 
 	public Player getPlayer(Team.Type teamType, int index) {
-		return room.getPlayer(teamType, index);
+		return room!=null?room.getPlayer(teamType, index):null;
 	}
 
+	public Player getPlayerById(int playerId) {
+		return room!=null?room.findPlayerById(playerId):null;
+	}
+	
 	public Player getMe() {
 		return me;
 	}
@@ -271,11 +281,19 @@ public class WorkThread extends Thread { //工作线程
 	}
 	
 	public int getMyId() {
-		return me.getId();
+		return me!=null?me.getId():-1;
 	}
 
+	public int getOwnerId() {
+		return room!=null?room.getOwnerId():-1;
+	}
+	
+	public Player getOwner() {
+		return room!=null?room.getOwner():null;
+	}
+	
 	public boolean imOwner() {
-		return me.getId()==room.getOwner();
+		return getMyId()==getOwnerId();
 	}
 
 }

@@ -52,7 +52,7 @@ public class WorkThread extends Thread {
 					command = (NetCommand) inputStream.readObject();
 				} catch (SocketException | EOFException se) {
 					System.out.println("Player leave: " + player.getName());
-					room.cmdRemove(player);
+					room.cmdRemove(player.getId());
 					inputStream.close();
 					socket.close();
 					break;
@@ -74,14 +74,12 @@ public class WorkThread extends Thread {
 					break;
 				case READY:
 					boolean isReady= (boolean)command.getData();
-					if(senderId == room.getOwner()) {
+					if(senderId == room.getOwnerId()) {
 						sender.setReady(isReady);
 						boolean areYouReady = room.isAllReady();
 						if(areYouReady) {
 							long seed = System.currentTimeMillis();
-							NetCommand seedForward = new NetCommand(Code.SEED);
-							seedForward.setData(seed);
-							room.groupSend(seedForward);
+							room.cmdSendSeed(seed);
 						}
 					}else {
 						sender.setReady(true);
@@ -89,20 +87,22 @@ public class WorkThread extends Thread {
 					}
 					break;
 				case KICK:
-					int playerIdToKick = (int)command.getData();
-					boolean check = isYou(playerIdToKick);
-					if(check == false) {
-						boolean detection = threadControl.remove(playerIdToKick);
-						if(detection == true) {
-							NetCommand kickCmd = new NetCommand(Code.KICK);
-							kickCmd.setData(sender);
-							room.groupSend(kickCmd);
-							break;
+					// Check if sender is room owner
+					if(senderId == room.getOwnerId()) {
+						int playerIdToKick = (int)command.getData();
+						boolean isKickingYourself = isYou(playerIdToKick);
+						if(!isKickingYourself) {
+							room.groupSend(command);
+							room.remove(playerIdToKick);
+							System.out.println(sender.getName() + " is kicked.");
+						} else {
+							System.out.println(sender.getName() + " try to kick himself, denied.");
 						}
 					} else {
-						System.out.println("Data illegal");
-						break;
+						System.out.println(sender.getName() + " has no priviledge to send kick command.");
 					}
+					
+					break;
 				case SELECT_ROLE:
 					int playerId = command.getSender();
 					int roleId = (Integer)command.getData();
@@ -111,7 +111,7 @@ public class WorkThread extends Thread {
 					room.groupSend(command);
 					break;
 				case SET_OWNER:
-					if(room.getOwner() != senderId) {
+					if(room.getOwnerId() != senderId) {
 						return;
 					}
 					int newOwner = (int)command.getData();
@@ -138,7 +138,11 @@ public class WorkThread extends Thread {
 	
 	public void close() {
 		try {
-			socket.close();
+			//outputStream.close();
+			//outputStream = null;
+			//socket.close();
+			//socket = null;
+			room.remove(player.getId());
 		} catch (IOException e) {
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
@@ -162,6 +166,10 @@ public class WorkThread extends Thread {
 
 	public boolean isReady() {
 		// TODO 自动生成的方法存根
-		return player.isReady();
+		return player!=null && player.isReady();
+	}
+	
+	public int getPlayerId() {
+		return player!=null?player.getId():-1;
 	}
 }

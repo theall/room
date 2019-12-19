@@ -3,3 +3,4 @@
 out
 pom.xml
 *.jar
+/META-INF

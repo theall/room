@@ -29,7 +29,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-//房间界面
+    //房间界面
     private JLabel lblName; //定义按钮变量
 	private JList<String> listRooms; //定义房间界面变量方便后面调用
     private JTextField txtName;//构建我需要的框架 JTextField这个类表示文本框，只能是单行文本不能多行文本

@@ -152,10 +152,16 @@ public class Room implements Serializable {
 		groupSend(command);
 	}
 
-	private void cmdRemovePlayer(Player player) throws IOException {
+	private void cmdRemovePlayer(int playerId) throws IOException {
 		NetCommand command = new NetCommand(NetCommand.Code.LEAVE);
-		command.setData(player);
+		command.setData(playerId);
 		groupSend(command);
+	}
+
+	public void cmdSendSeed(long seed) throws IOException {
+		NetCommand seedForward = new NetCommand(NetCommand.Code.SEED);
+		seedForward.setData(seed);
+		groupSend(seedForward);
 	}
 
 	public void groupSend(NetCommand command) throws IOException {
@@ -183,9 +189,9 @@ public class Room implements Serializable {
 		cmdNewPlayer(player);
 	}
 
-	public boolean cmdRemove(Player player) throws IOException {
-		Player ret = remove(player.getId());
-		cmdRemovePlayer(player);
+	public boolean cmdRemove(int playerId) throws IOException {
+		Player ret = remove(playerId);
+		cmdRemovePlayer(playerId);
 		return ret != null;
 	}
 
@@ -240,16 +246,25 @@ public class Room implements Serializable {
 		return team.getPlayer(index);
 	}
 	
-	public int getOwner() {
+	public int getOwnerId() {
 		return owner;
 	}
 
+	public Player getOwner() {
+		return findPlayerById(owner);
+	}
+	
 	public void setOwner(int owner) {
 		this.owner = owner;
 	}
 	
 	public boolean isAllReady() {
-		for(Player player : getPlayers()) {
+		ArrayList<Player> players = getPlayers();
+		if(players.size() <= 1) {
+			// Only owner in room
+			return false;
+		}
+		for(Player player : players) {
 			if(player.getId() == owner)
 				continue;
 			if(!player.isReady())
@@ -257,5 +272,4 @@ public class Room implements Serializable {
 		}
 		return true;
 	}
-
 }

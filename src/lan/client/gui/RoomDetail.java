@@ -10,24 +10,15 @@ import lan.utils.Player;
 import lan.utils.Room;
 import lan.utils.Team;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-import javax.swing.*;
 
 public class RoomDetail extends JDialog 
 		implements ClientInterface, MouseListener, ActionListener, KeyListener, WindowListener { // 战斗界面
@@ -55,14 +46,11 @@ public class RoomDetail extends JDialog
 
     public RoomDetail(String host, int port, String name, boolean imOwner) { // 客户端图形界面
     	initialize();
-    	btnStart.setEnabled(!imOwner);
-    	
-    	setButtonStartText(imOwner);
-        setPopupMenuStatus(imOwner);
-
 		workThread = new WorkThread(host, port, name);
 		workThread.setClientInterface(this);
 		workThread.start();
+		
+		updateStartButton();
     }
 
     public void initialize() {
@@ -70,7 +58,7 @@ public class RoomDetail extends JDialog
         setModal(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);//关闭
-        setSize(680, 460);
+        setSize(540, 340);
         setLocation(400, 240);
         listBlue = createList();
         listRed = createList();
@@ -81,7 +69,7 @@ public class RoomDetail extends JDialog
         txtContent.setEditable(false);// 设置可编辑为假
         lblSend = new JLabel("发言:"); // 发言文本
         txtSend = new JTextField(20);// 文本框
-        btnSend = new JButton("发送");// 按钮
+        btnSend = new JButton("Send");// 按钮
         btnSend.setMnemonic(java.awt.event.KeyEvent.VK_ENTER);
         btnStart = new JButton();
         lblName = new JLabel("队伍列表");// 创建了一个文本标签
@@ -163,11 +151,9 @@ public class RoomDetail extends JDialog
     }
 
     @Override
-    public void roomRefreshed(Room room) { // 重写了接口的方法
-        if (room == null) // 如果房间为空就返回空
-            return;
-
-        roomOwnerId = room.getOwner();//这里是在房间里拿到了房主的ID
+    public void refreshRoom() { // 重写了接口的方法
+    	if(roomOwnerId == -1)
+    		roomOwnerId = workThread.getOwnerId();
         updateRoomInfoToGui();
     }
 
@@ -199,6 +185,7 @@ public class RoomDetail extends JDialog
     private void addMsg(String msg) {
         txtContent.append(msg); // 输出说的话
         txtContent.append("\n");// 换行
+        txtContent.setCaretPosition(txtContent.getText().length());
     }
 
     @Override
@@ -230,10 +217,33 @@ public class RoomDetail extends JDialog
     public void mouseReleased(MouseEvent e) {
         int button = e.getButton();
         if(button == 3) {// right button
-            popupMenu.show((Component)e.getSource(), e.getX(), e.getY());
+        	showContextMenu((Component)e.getSource(), e.getX(), e.getY());
         }
     }
 
+    private void showContextMenu(Component component, int x, int y) {
+    	menuKick.setEnabled(false);
+    	menuSetOwner.setEnabled(false);
+    	popupMenu.show(component, x, y);
+    	Player player = getSelectedPlayerFromPopupMenu();
+    	boolean imOwner = workThread.imOwner();
+    	boolean isMe = player!=null && workThread.getMyId()==player.getId();
+    	menuKick.setEnabled(!isMe && imOwner && player!=null);
+    	menuSetOwner.setEnabled(!isMe && imOwner && player!=null && !player.isReady());
+    }
+    
+    private Player getSelectedPlayerFromPopupMenu() {
+    	MyJList list = (MyJList) popupMenu.getInvoker();
+        Team.Type teamType;
+        int index = list.getSelectedIndex();
+        if (list == listRed)
+            teamType = Team.Type.RED;
+        else
+            teamType = Team.Type.BLUE;
+        
+        return workThread.getPlayer(teamType, index);
+    }
+    
 	private void sendContentToServer() {
 		String constent = txtSend.getText().trim();
 		txtSend.setText("");
@@ -289,7 +299,7 @@ public class RoomDetail extends JDialog
     
     @Override
     public void onSeed(long seed) { //这个地方通知服务器启动游戏
-        System.out.println("Seed received, start game: " + seed);
+        addMsg("Starting game...");
         // TODO 自动生成的方法存根
         DemoFrame gameFrame = new DemoFrame();
         gameFrame.setSeed(seed);
@@ -297,9 +307,16 @@ public class RoomDetail extends JDialog
     }
 
     @Override
-    public void onPlayerKicked(Player player, Room room) {
-        System.out.println(player.getName() + " is kicked：");
-        roomRefreshed(room);
+    public void onPlayerKicked(Player player) {
+    	if(player.getId() == workThread.getMyId()) {
+            addMsg("You've been kicked.");
+    		// Im been kicked, exit
+            JOptionPane.showMessageDialog(this, "You have been kicked");
+    		workThread.close();
+    	} else {
+            addMsg(player.getName() + " is kicked");
+            refreshRoom();
+        }
     }
 
 	@Override
@@ -344,44 +361,18 @@ public class RoomDetail extends JDialog
 	}
 
 	@Override
-	public void onOwerReset(int newOwner, Room room) {
-		// TODO Auto-generated method stub
-		Player player = room.findPlayerById(newOwner);// 把房主传到玩家中然后刷新出来
-		if (player == null)
-			return;
-        setPopupMenuStatus(workThread.imOwner());//调用函数进行判断刷新
-        setButtonStartText(workThread.imOwner());//调用函数进行判断刷新
-		roomRefreshed(room);
+	public void onOwerReset(int newOwner) {
+		refreshRoom();
+		Player player = workThread.getPlayerById(newOwner);// 把房主传到玩家中然后刷新出来
 		addMsg(player.getName() + " 成为新的房主.");// 界面输入
 	}
 
     @Override
-	public void onPlayerEnter(Player player, Room room) {// 在接口中传入需要的Player room
-		if (room == null) // 如果房间为空就返回空
-			return;
-
-		roomRefreshed(room);// 刷新房间信息
-		addMsg(player.getName() + " 玩家加入战斗");
+	public void onPlayerEnter(int playerId) {// 在接口中传入需要的Player room
+    	Player player = workThread.getPlayerById(playerId);
+		refreshRoom();// 刷新房间信息
+		addMsg(player.getName() + " 进入房间");
 	}
-
-    private void setButtonStartText(boolean isOwner) {
-        if(isOwner)
-            btnStart.setText("开始游戏");
-        else
-            btnStart.setText("准备游戏");
-
-    }
-    private void setPopupMenuStatus(boolean status) {
-        if(status){
-            menuKick.setEnabled(true);
-            menuSetOwner.setEnabled(true);
-        }
-        else {
-            menuKick.setEnabled(false);
-            menuSetOwner.setEnabled(false);
-        }
-
-    }
 
     @Override
 	public void keyTyped(KeyEvent e) {
@@ -404,29 +395,40 @@ public class RoomDetail extends JDialog
 
 	@Override
 	public void onPlayerReadyStateChanged(int playerId, boolean isReady) {
-		Room room = workThread.getRoom();
-		if(room == null)
-			return;
-		
-		Player player = room.findPlayerById(playerId);
-        if(player == null)
-        	return;
-        
-        player.setReady(isReady);
         updateRoomInfoToGui();
-        
-        boolean isMe = playerId == workThread.getMyId();
-        if(isMe)
-        	btnStart.setText(isReady?"Cancel":"Ready");
-        
-        if(workThread.imOwner())
-        	btnStart.setEnabled(room.isAllReady());
+	}
+	
+	private void updateStartButton() {
+		Room room = workThread.getRoom();
+		if(workThread.imOwner()) {
+			btnStart.setText("Start");
+			btnStart.setEnabled(room!=null && room.isAllReady());
+		} else {
+			Player me = workThread.getMe();
+			btnStart.setText(me!=null && me.isReady()?"Cancel":"Ready");
+			btnStart.setEnabled(true);
+		}
 	}
 	
 	private void updateRoomInfoToGui() {
 		Room room = workThread.getRoom();
 		setTeamToList(room.getBlue(), listBlue); // 调用方法同步名字
         setTeamToList(room.getRed(), listRed); // 房间名字同步到了列表中
+        
+        updateStartButton();
+	}
+
+	@Override
+	public void onPlayerLeave(Player player) {
+		// TODO Auto-generated method stub
+		addMsg(player.getName() + " is leaved.");
+		refreshRoom();
+	}
+
+	@Override
+	public void workThreadExit() {
+		// TODO Auto-generated method stub
+		this.setVisible(false);
 	}
 }
 
