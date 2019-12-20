@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -65,14 +66,10 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
     }
 
     private String getRandomName() {
-    	char cha[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        String str = "";//定义字符串变量
-        for (int i = 0; i < 5; i++) {//进行循环
-            int index;
-            index = (int) (Math.random() * (cha.length)); //随机在A到Z3个字母
-            str = str + String.valueOf(cha[index]);
-        }
-        return str;
+        String names[] = {"jiangdu", "theall", "hutianzhi", "luojunlong", "luozhiwen", "yangfei"};
+        Random random = new Random();
+        int index = random.nextInt(names.length);
+        return names[index];
     }
 
     void setRoom(RoomHeadList roomHeadList) { //定义函数给参数
