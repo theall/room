@@ -7,18 +7,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07edb5cf-e657-41fd-91e1-4fe246be1fdc" name="默认" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lan/client/game/entity/Tank.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/room.iml" beforeDir="false" afterPath="$PROJECT_DIR$/room.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom_client.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom_client.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom_server.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom_server.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/Demo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/DemoFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/DemoFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/DemoPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/DemoPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/MyThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/MyThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Action.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/sprite/Action.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Dir.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/base/Dir.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Sprite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/sprite/Sprite.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Tank.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lan/client/gui/RoomDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/gui/RoomDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/gui/RoomList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/gui/RoomList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/gui/widget/list/MyJList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/gui/widget/list/MyJList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/util/ClientInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/util/ClientInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/server/thread/WorkThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/server/thread/WorkThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/server/thread/WorkThreadManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/server/thread/WorkThreadManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/utils/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/utils/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/utils/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/utils/Room.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/thread/WorkThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/thread/WorkThread.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,6 +31,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -58,7 +61,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -81,7 +84,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ClientGui">
+  <component name="RunManager" selected="Application.DemoFrame">
     <configuration name="ChooseCharacterDialog" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="lan.client.gui.ChooseCharacterDialog" />
       <module name="room" />
@@ -156,9 +159,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.DemoFrame" />
         <item itemvalue="Application.MyServer" />
         <item itemvalue="Application.JPopupMenuDemo" />
-        <item itemvalue="Application.DemoFrame" />
         <item itemvalue="Application.ChooseCharacterDialog" />
       </list>
     </recent_temporary>
@@ -212,7 +215,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

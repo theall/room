@@ -1,4 +1,4 @@
-package lan.client.game.sprite;
+package lan.client.game.base;
 
 public enum Dir {
     UP,

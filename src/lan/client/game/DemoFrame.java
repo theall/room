@@ -1,42 +1,41 @@
 package lan.client.game;
 
-import lan.client.game.sprite.Dir;
-import lan.client.game.sprite.Tank;
+import lan.client.game.base.Button;
+import lan.client.game.base.Dir;
+import lan.client.game.entity.Tank;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Random;
 
-public class DemoFrame extends JFrame {
+public class DemoFrame extends JFrame implements MouseListener, MouseMotionListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private MyThread myThread;
 	private Random random;
+	private Game game;
 	private Tank tank;
+	private Button button;
 	public DemoFrame() {
-		tank = new Tank();
-		BufferedImage tankImage = null;
-		try {
-			tankImage = ImageIO.read(new FileInputStream("F:\\Warchariot\\7.png"));//传图片
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		tank.load(tankImage);
-		tank.setPos(100, 100);//坦克位置
+		button = new Button();
+		game = new Game();
+		game.load();
+		tank = game.getGameScene().getObjectLayer().getRandomTank();
+		tank.bindButton(button);
+
 		DemoPanel panel = new DemoPanel();// 实例化DemoPanel
-		myThread = new MyThread(tank, panel);
+		myThread = new MyThread(game, panel);
 
 		this.setTitle("Game");// 新建了窗体
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 写了一个窗体退出方式
 		this.setSize(1000, 500);// 大小
-		Demo demo = new Demo();// 创建demo类中的对象
+		this.setLocation(400, 300);
+		Game demo = new Game();// 创建demo类中的对象
 
 		this.add(panel); // 添加图片到窗口
 		this.setVisible(true);// 这里是吧窗口显示移动到Demo类实例化以后，防止窗口显示前Demo没有被加载
@@ -48,33 +47,38 @@ public class DemoFrame extends JFrame {
 
 			@Override
 			public void keyPressed(KeyEvent e) {// 键盘监听
-				int step = 10;//getRandStep();
-				Dir dir = null;
+				Button.Type type = null;
 				if (KeyEvent.VK_W == e.getKeyCode()) {// 按W=上移
-					dir = Dir.UP;
+					type = Button.Type.UP;
 				} else if (KeyEvent.VK_S == e.getKeyCode()) {// 按s向下
-					dir = Dir.DOWN;
+					type = Button.Type.DOWN;
 				} else if (KeyEvent.VK_A == e.getKeyCode()) {// 按A向左移动
-					dir = Dir.LEFT;
+					type = Button.Type.LEFT;
 				} else if (KeyEvent.VK_D == e.getKeyCode()) {// 按D向右
-					dir = Dir.RIGHT;
-				} else if (KeyEvent.VK_J == e.getKeyCode()) {// 图片变大
-					demo.setWidth(demo.getWidth() + step);
-					demo.setHeight(demo.getHeight() + step);
-				} else if (KeyEvent.VK_K == e.getKeyCode()) {// 图片变小
-					demo.setWidth(demo.getWidth() - step);
-					demo.setHeight(demo.getHeight() - step);
+					type = Button.Type.RIGHT;
 				}
-				if(dir != null)
-					tank.setDir(dir);
+				if(type != null)
+					button.set(type, true);
 			}
-			public void moveDir(Dir dir){
-				int step = 10;
-			}
+
 			@Override
 			public void keyReleased(KeyEvent e) {
+				Button.Type type = null;
+				if (KeyEvent.VK_W == e.getKeyCode()) {// 按W=上移
+					type = Button.Type.UP;
+				} else if (KeyEvent.VK_S == e.getKeyCode()) {// 按s向下
+					type = Button.Type.DOWN;
+				} else if (KeyEvent.VK_A == e.getKeyCode()) {// 按A向左移动
+					type = Button.Type.LEFT;
+				} else if (KeyEvent.VK_D == e.getKeyCode()) {// 按D向右
+					type = Button.Type.RIGHT;
+				}
+				if(type != null)
+					button.set(type, false);
 			}
 		});
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 	}
 
 	public void start() {
@@ -94,5 +98,40 @@ public class DemoFrame extends JFrame {
 		my.setVisible(true);
 
 		my.start();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		tank.setPos(e.getX(), e.getY());
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		setTitle("" + e.getX() + "." + e.getY());
 	}
 }

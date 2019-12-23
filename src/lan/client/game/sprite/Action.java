@@ -1,10 +1,12 @@
 package lan.client.game.sprite;
 
+import lan.client.game.base.GameObject;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Action {
-    private Image[] images = new Image[4];
+public class Action extends GameObject {
+    private Frame[] frames = new Frame[4];
     private int index;
     private static int DURATION = 10;//持续时间
     private int frameSequence;
@@ -13,6 +15,7 @@ public class Action {
         frameSequence = 0;
         index = 0;
     }
+
     public void load(BufferedImage image) {
         int chunkWidth = image.getWidth() / 4;
         int chunkHeight = image.getHeight();
@@ -29,7 +32,7 @@ public class Action {
                     chunkHeight, null); //绘制图片的xy宽高
             gr.dispose();
 
-            images[x] = bufferedImage;
+            frames[x] = new Frame(bufferedImage);
         }
     }
 
@@ -43,9 +46,22 @@ public class Action {
         }
     }
 
-    public Image getCurrentImage() {
+    @Override
+    public void render(Graphics g) {
+
+    }
+
+    public Frame getCurrentFrame() {
         if(index<0 || index>=4)
             return null;
-        return images[index];
+
+        return frames[index];
+    }
+
+    public Image getCurrentImage() {
+        Frame frame = getCurrentFrame();
+        if(frame == null)
+            return null;
+        return frame.getImage();
     }
 }

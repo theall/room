@@ -160,8 +160,14 @@ public class WorkThread extends Thread { //工作线程
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				socket.close();
+			} catch (IOException e) {
+
+			}
 		}
-		
+
 		if(clientInterface != null)
 			clientInterface.workThreadExit();
 	}

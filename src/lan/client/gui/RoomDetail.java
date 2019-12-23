@@ -59,7 +59,6 @@ public class RoomDetail extends JDialog
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);//¹Ø±Õ
         setSize(540, 340);
-        setLocation(400, 240);
         listBlue = createList();
         listRed = createList();
 

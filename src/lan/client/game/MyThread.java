@@ -1,20 +1,14 @@
 package lan.client.game;
 
-import lan.client.game.sprite.Tank;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
 public class MyThread extends Thread {
-	private Tank tank;
+	private Game game;
 	private DemoPanel panel;
 	private long lastFrameTime;
 
-	public MyThread(Tank tank, DemoPanel panel) {
-		this.tank = tank;
+	public MyThread(Game game, DemoPanel panel) {
+		this.game = game;
 		this.panel = panel;
-		panel.setGameObject(tank);
+		panel.setGameObject(game);
 	}
 
 	@Override
@@ -26,13 +20,13 @@ public class MyThread extends Thread {
 				franeCounter++;
 				long currentTime = System.currentTimeMillis();//获取系统时间
 
-				tank.step();
+				game.step();
 				long frameTime = currentTime - lastFrameTime;
 				lastFrameTime = currentTime;
 				int fps = (int)(1000.0 / frameTime);
 				panel.setFps(fps);
 				panel.updateUI();
-				Thread.sleep(33);// 这里利用休眠刷新
+				Thread.sleep(17);// 这里利用休眠刷新
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
