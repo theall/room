@@ -1,5 +1,6 @@
 package lan.client.game.scene.layer;
 
+import lan.client.game.base.RandomWrapper;
 import lan.client.game.collide.Collide;
 import lan.client.game.collide.CollideDesc;
 import lan.client.game.collide.Edge;
@@ -39,18 +40,18 @@ public class ObjectLayer extends Layer {
     }
 
     public void load(ArrayList<BufferedImage> imageArrayList) {
-        Random random = new Random(System.currentTimeMillis());
+        RandomWrapper randomWrapper = RandomWrapper.getInstance();
         for(BufferedImage image : imageArrayList) {
             Tank tank = new Tank();
             tank.load(image);
-            tank.setPos(random.nextInt(100)+100, random.nextInt(100)+100);
+            tank.setPos(randomWrapper.nextInt(100, 200), randomWrapper.nextInt(100, 200));
             tankList.add(tank);
         }
     }
 
     public Tank getRandomTank() {
-        Random random = new Random(System.currentTimeMillis());
-        return tankList.get(random.nextInt(tankList.size()));
+        RandomWrapper randomWrapper = RandomWrapper.getInstance();
+        return tankList.get(randomWrapper.nextInt(tankList.size()));
     }
 
     @Override

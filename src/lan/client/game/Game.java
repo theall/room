@@ -1,15 +1,16 @@
 package lan.client.game;
 
 import lan.client.game.base.GameObject;
+import lan.client.game.base.RandomWrapper;
 import lan.client.game.scene.GameScene;
 
 import java.awt.Graphics;
-import java.awt.Image;
 
 public class Game extends GameObject {
 	private GameScene gameScene;
 
-	public Game() {
+	public Game(long seed) {
+        RandomWrapper.initialize(seed);
 		gameScene = new GameScene();
 	}
 

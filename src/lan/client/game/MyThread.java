@@ -1,36 +1,43 @@
 package lan.client.game;
 
+import lan.client.gui.widget.list.IconText;
+import lan.client.gui.widget.list.ImageListModel;
+
+import javax.swing.*;
+
 public class MyThread extends Thread {
 	private Game game;
-	private DemoPanel panel;
+	private GameDialog gameDialog;
 	private long lastFrameTime;
-
-	public MyThread(Game game, DemoPanel panel) {
+	private static float DEFAULT_FRAME_TIME = 1000.0f/60;
+	public MyThread(Game game, GameDialog gameDialog) {
 		this.game = game;
-		this.panel = panel;
-		panel.setGameObject(game);
+		this.gameDialog = gameDialog;
 	}
 
 	@Override
 	public void run() { // 从重写run方法
 		lastFrameTime = System.currentTimeMillis();
-		int franeCounter = 0;
+		int frameCounter = 0;
+		int sleptTime = 0;
 		while (true) {
 			try {
-				franeCounter++;
-				long currentTime = System.currentTimeMillis();//获取系统时间
-
+				frameCounter++;
+				long frameStartTime = System.currentTimeMillis();//获取系统时间
 				game.step();
-				long frameTime = currentTime - lastFrameTime;
-				lastFrameTime = currentTime;
-				int fps = (int)(1000.0 / frameTime);
-				panel.setFps(fps);
-				panel.updateUI();
-				Thread.sleep(17);// 这里利用休眠刷新
+				gameDialog.render();
+				long dt = System.currentTimeMillis() - frameStartTime;
+				long sleepTime = (long)(frameCounter*DEFAULT_FRAME_TIME) - sleptTime - dt;
+				if(sleepTime > 0) {
+					sleptTime += sleepTime;
+					Thread.sleep(sleepTime);// 这里利用休眠刷新
+				}
+				long fakeFrameTime = System.currentTimeMillis() - frameStartTime;
+				int fps = (int)(1000.0/fakeFrameTime);
+				gameDialog.setFps(fps);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
 		}
 	}
 

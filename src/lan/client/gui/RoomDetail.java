@@ -1,6 +1,5 @@
 package lan.client.gui;
 
-import lan.client.game.DemoFrame;
 import lan.client.gui.widget.list.IconText;
 import lan.client.gui.widget.list.ImageCellRender;
 import lan.client.gui.widget.list.MyJList;
@@ -43,8 +42,9 @@ public class RoomDetail extends JDialog
 
     private int roomOwnerId = -1;
     private WorkThread workThread; // 工作线程
+    private long seed = -1;
 
-    public RoomDetail(String host, int port, String name, boolean imOwner) { // 客户端图形界面
+    public RoomDetail(String host, int port, String name) { // 客户端图形界面
     	initialize();
 		workThread = new WorkThread(host, port, name);
 		workThread.setClientInterface(this);
@@ -295,14 +295,18 @@ public class RoomDetail extends JDialog
             }
         }
     }
-    
+
+    public long getSeed() {
+        return seed;
+    }
+
     @Override
     public void onSeed(long seed) { //这个地方通知服务器启动游戏
         addMsg("Starting game...");
-        // TODO 自动生成的方法存根
-        DemoFrame gameFrame = new DemoFrame();
-        gameFrame.setSeed(seed);
-        gameFrame.setVisible(true);
+        this.seed = seed;
+
+        // Save seed
+        setVisible(false);
     }
 
     @Override

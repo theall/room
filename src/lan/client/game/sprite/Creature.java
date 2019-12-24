@@ -2,6 +2,7 @@ package lan.client.game.sprite;
 
 import lan.client.game.base.Button;
 import lan.client.game.base.Dir;
+import lan.client.game.base.RandomWrapper;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -28,7 +29,7 @@ public class Creature extends Sprite {
     }
 
     public void generateRandomDir() {
-        int i = random.nextInt(Dir.values().length);
+        int i = RandomWrapper.getInstance().nextInt(Dir.values().length);
         Dir dir = Dir.values()[i];
         setDir(dir);
     }

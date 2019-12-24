@@ -3,6 +3,7 @@ package lan.client.gui;
 import lan.server.Server;
 import lan.utils.Room;
 import lan.utils.Utils;
+import lan.client.game.GameDialog;
 import lan.client.thread.FindHostThread;
 import lan.client.thread.RoomHeadInfo;
 import lan.client.thread.RoomHeadList;
@@ -89,7 +90,6 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
         setRoom(roomHeadList); //调用方法然后显示列表
     }
 
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -102,14 +102,32 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
 			localServer.broadcastRoom(room);
 			
 			String serverHost = localServer.getHost();
-			setVisible(false);
-			RoomDetail roomDetail = new RoomDetail(serverHost, Utils.WORK_PORT, name, true); //这里是在战斗界面给对象然后给参数
-			roomDetail.setVisible(true);
-            localServer.shutdown();
-            setVisible(true);
+            enterRoomDialog(serverHost, Utils.WORK_PORT, name);
 		}
 	}
-	
+
+	private void enterRoomDialog(String host, int port, String roomName) {
+        setVisible(false);
+        RoomDetail roomDetail = new RoomDetail(host, port, roomName); //这里是在战斗界面给对象然后给参数
+        roomDetail.setVisible(true);
+
+        long seed = roomDetail.getSeed();
+        if(seed != -1) {
+            System.out.println("Starting game");
+
+            GameDialog gameDialog = new GameDialog(roomDetail.getSeed());
+            gameDialog.setVisible(true);
+        }
+
+        if(localServer != null) {
+            System.out.println("Local server shutdown");
+            localServer.shutdown();
+            localServer = null;
+        }
+
+        setVisible(true);
+    }
+
 	@Override
 	public void mouseClicked(MouseEvent e) {//双击进入房间
 		int index = listRooms.getSelectedIndex(); //定义了索引，list选择索引，也就是在list当中点点点
@@ -120,10 +138,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
                 return;
             }
             RoomHeadInfo roomHeadInfo = findThread.getRoom(index); //查找线程
-            setVisible(false);
-            RoomDetail roomDetail = new RoomDetail(roomHeadInfo.host, roomHeadInfo.port, name, false); //这里是在战斗界面给对象然后给参数
-            roomDetail.setVisible(true);
-            setVisible(true);
+            enterRoomDialog(roomHeadInfo.host, roomHeadInfo.port, name);
         }
 	}
 

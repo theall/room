@@ -7,20 +7,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07edb5cf-e657-41fd-91e1-4fe246be1fdc" name="默认" comment="">
-      <change afterPath="$PROJECT_DIR$/src/lan/client/game/entity/Tank.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lan/client/game/RenderPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom_client.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom_client.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom_server.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom_server.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/game/Demo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/game/DemoFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/DemoFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/game/DemoPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/DemoPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/DemoFrame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/DemoPanel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lan/client/game/MyThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/MyThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Action.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/sprite/Action.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Dir.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/base/Dir.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Sprite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/sprite/Sprite.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Tank.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/scene/layer/ObjectLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/scene/layer/ObjectLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/game/sprite/Creature.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/game/sprite/Creature.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lan/client/gui/RoomDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/gui/RoomDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lan/client/thread/WorkThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/thread/WorkThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/gui/RoomList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/gui/RoomList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lan/client/thread/RoomHeadInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/lan/client/thread/RoomHeadInfo.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -84,7 +81,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.DemoFrame">
+  <component name="RunManager" selected="Application.ClientGui">
     <configuration name="ChooseCharacterDialog" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="lan.client.gui.ChooseCharacterDialog" />
       <module name="room" />
@@ -111,25 +108,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="DemoFrame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="lan.client.game.DemoFrame" />
+    <configuration name="GameDialog" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="lan.client.game.GameDialog" />
       <module name="room" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="lan.client.game.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="JPopupMenuDemo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="lan.client.gui.JPopupMenuDemo" />
-      <module name="room" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="lan.client.gui.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -153,15 +137,13 @@
     <list>
       <item itemvalue="Application.ClientGui" />
       <item itemvalue="Application.MyServer" />
-      <item itemvalue="Application.DemoFrame" />
       <item itemvalue="Application.ChooseCharacterDialog" />
-      <item itemvalue="Application.JPopupMenuDemo" />
+      <item itemvalue="Application.GameDialog" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.DemoFrame" />
+        <item itemvalue="Application.GameDialog" />
         <item itemvalue="Application.MyServer" />
-        <item itemvalue="Application.JPopupMenuDemo" />
         <item itemvalue="Application.ChooseCharacterDialog" />
       </list>
     </recent_temporary>
@@ -230,6 +212,11 @@
           <url>file://$PROJECT_DIR$/src/lan/server/thread/WorkThreadManager.java</url>
           <line>45</line>
           <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/lan/client/thread/WorkThread.java</url>
+          <line>72</line>
+          <option name="timeStamp" value="114" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
