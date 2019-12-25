@@ -96,7 +96,12 @@ public class Creature extends Sprite {
             }
         }
 
-        fourDirAnimation.step();
+        if(isMoving()) {
+            fourDirAnimation.step();
+        } else {
+            fourDirAnimation.reset();
+        }
+
         Image image = fourDirAnimation.getCurrentImage();
         setImage(image);
     }

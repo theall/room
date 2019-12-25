@@ -3,6 +3,7 @@ package lan.client.game;
 import lan.client.game.base.GameObject;
 import lan.client.game.base.RandomWrapper;
 import lan.client.game.scene.GameScene;
+import lan.client.game.sprite.Sprite;
 
 import java.awt.Graphics;
 
@@ -20,6 +21,10 @@ public class Game extends GameObject {
 
 	public GameScene getGameScene() {
 		return gameScene;
+	}
+
+	public Sprite getSprite(int x, int y) {
+		return gameScene.getSprite(x, y);
 	}
 
 	@Override

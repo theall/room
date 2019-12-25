@@ -61,6 +61,11 @@ public class FourDirAnimation extends GameObject {
             currentAnimation = animations[0];
     }
 
+    public void reset() {
+        if(currentAnimation != null)
+            currentAnimation.reset();
+    }
+
     @Override
     public void step() {
         currentAnimation.step();

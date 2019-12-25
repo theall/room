@@ -5,6 +5,7 @@ import lan.client.game.scene.layer.EffectLayer;
 import lan.client.game.scene.layer.ObjectLayer;
 import lan.client.game.scene.layer.TerrianLayer;
 import lan.client.game.scene.layer.UILayer;
+import lan.client.game.sprite.Sprite;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,6 +26,10 @@ public class GameScene extends GameObject {
         objectLayer = new ObjectLayer();
         effectLayer = new EffectLayer();
         uiLayer = new UILayer();
+    }
+
+    public Sprite getSprite(int x, int y) {
+        return objectLayer.getSprite(x, y);
     }
 
     public void load() {

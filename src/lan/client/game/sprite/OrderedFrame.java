@@ -95,5 +95,6 @@ public class OrderedFrame extends GameObject {
 
     public void reset() {
         index = 0;
+        currentFrame = getCurrentFrame();
     }
 }

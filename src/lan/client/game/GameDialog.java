@@ -2,6 +2,7 @@ package lan.client.game;
 
 import lan.client.game.base.Button;
 import lan.client.game.entity.Tank;
+import lan.client.game.sprite.Sprite;
 
 import javax.swing.*;
 
@@ -64,7 +65,20 @@ public class GameDialog extends JDialog implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		tank.setPos(e.getX(), e.getY());
+		Point dialogPos = getLocationOnScreen();
+		Point panelPos = renderPanel.getLocationOnScreen();
+		int diffX = panelPos.x-dialogPos.x;
+		int diffY = panelPos.y-dialogPos.y;
+		int gamePosX = e.getX()-diffX;
+		int gamePosY = e.getY()-diffY;
+		Sprite sprite = game.getSprite(gamePosX, gamePosY);
+		if(sprite != null) {
+			tank.bindButton(null);
+			tank = (Tank) sprite;
+			tank.bindButton(button);
+		} else {
+			tank.setPos(gamePosX, gamePosY);
+		}
 	}
 
 	@Override

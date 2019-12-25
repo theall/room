@@ -28,6 +28,10 @@ public class Sprite extends GameObject { //»­Ãæ
         this.sy = sy;
     }
 
+    public boolean isMoving() {
+        return this.sx!=0 || this.sy!=0;
+    }
+
     public void setPos(float x, float y) {
         _x = x;
         _y = y;

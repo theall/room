@@ -105,6 +105,14 @@ public class ObjectLayer extends Layer {
         }
     }
 
+    public Sprite getSprite(int x, int y) {
+        for(Tank tank : tankList) {
+            if(tank.getRectangle().contains(x,y))
+                return tank;
+        }
+        return null;
+    }
+
     @Override
     public void render(Graphics g) {
         for(Tank tank : tankList) {
