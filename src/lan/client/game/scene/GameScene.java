@@ -33,6 +33,8 @@ public class GameScene extends GameObject {
     }
 
     public void load() {
+        terrianLayer.load();
+
         ArrayList<BufferedImage> imageArrayList = new ArrayList<>();
         imageArrayList.add(getBufferedImage("/resources/tank/no7_mm1/no7_mm3.png"));
         imageArrayList.add(getBufferedImage("/resources/tank/no7_mm2/no7_mm2r.png"));
@@ -84,12 +86,14 @@ public class GameScene extends GameObject {
 
     @Override
     public void step() {
+        terrianLayer.step();
         objectLayer.step();
         effectLayer.step();
     }
 
     @Override
     public void render(Graphics g) {
+        terrianLayer.render(g);
         objectLayer.render(g);
         effectLayer.render(g);
     }

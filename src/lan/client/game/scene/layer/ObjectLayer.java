@@ -2,19 +2,18 @@ package lan.client.game.scene.layer;
 
 import lan.client.game.base.RandomWrapper;
 import lan.client.game.collide.Collide;
-import lan.client.game.collide.CollideDesc;
+
 import lan.client.game.collide.Edge;
 import lan.client.game.collide.QuadTree;
 import lan.client.game.entity.Tank;
 import lan.client.game.sprite.Sprite;
-import org.omg.CORBA.MARSHAL;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+
 
 /**
  * ÈËÎï£¬Ì¹¿Ë²ã

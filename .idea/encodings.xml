@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/src/lan/client/gui/ClientGui.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/lan/client/gui/RoomDetail.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/lan/client/gui/RoomList.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/lan/client/gui/widget/list/ImageCellRender.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/lan/client/gui/widget/list/ImageListModel.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/lan/client/gui/widget/list/MyJList.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/lan/server/thread/BroadcastThread.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/lan/utils/Map.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/resources" charset="GBK" />
-    <file url="PROJECT" charset="GBK" />
+    <file url="file://$PROJECT_DIR$" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/resources/map/map1.png" charset="UTF-8" />
   </component>
 </project>

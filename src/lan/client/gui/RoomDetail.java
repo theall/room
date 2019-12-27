@@ -100,7 +100,6 @@ public class RoomDetail extends JDialog
 		txtSend.addKeyListener(this);
 		addWindowListener((WindowListener) this);
 	}
-
     
     private MyJList createList() {//把列表封装成函数然后调用
         MyJList list = new MyJList();
@@ -134,6 +133,7 @@ public class RoomDetail extends JDialog
     	
         ImageCellRender.setCharacters(iconArrayList);
     }
+
     @Override // ，玩家 和消息
     public void onMessage(String player, String msg) {// 上面的消息
         if (msg != null) {
