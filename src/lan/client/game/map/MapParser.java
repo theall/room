@@ -14,7 +14,7 @@ public class MapParser {//地图解析
         jsonFile = jsonName;
     }
 
-    public Image[][] parse() {
+    public Image[][] parse() {//解析json文件
         String jsonStr = readJsonData(jsonFile);
         Map map = JSON.parseObject(jsonStr, Map.class);
         String imageName = map.getImage();
@@ -24,7 +24,7 @@ public class MapParser {//地图解析
 
         int rows = map.getRows();
         int cols = map.getCols();
-        Image[][] images = new Image[rows][];
+        Image[][] images = new Image[rows][];//转换数组
         int[] data = map.getData();
         for(int i=0;i<rows;i++) {
             images[i] = new Image[cols];
