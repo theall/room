@@ -1,5 +1,6 @@
-package lan.client.game;
+package lan.client.gui;
 
+import lan.client.game.Game;
 import lan.client.game.base.Button;
 import lan.client.game.entity.Tank;
 import lan.client.game.sprite.Sprite;

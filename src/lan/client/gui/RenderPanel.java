@@ -1,4 +1,6 @@
-package lan.client.game;
+package lan.client.gui;
+
+import lan.client.game.Game;
 
 import javax.swing.*;
 import java.awt.*;

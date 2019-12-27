@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>Room</groupId>
-	<artifactId>game</artifactId>
+	<artifactId>client</artifactId>
 	<version>0</version>
 	<properties>
 		<project.build.sourceEncoding>GBK</project.build.sourceEncoding>
@@ -38,7 +38,7 @@
 							<transformers>
 								<transformer
 										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>lan.client.gui.GameDialog</mainClass>
+									<mainClass>lan.client.gui.ClientGui</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

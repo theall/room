@@ -3,7 +3,6 @@ package lan.client.gui;
 import lan.server.Server;
 import lan.utils.Room;
 import lan.utils.Utils;
-import lan.client.game.GameDialog;
 import lan.client.thread.FindHostThread;
 import lan.client.thread.RoomHeadInfo;
 import lan.client.thread.RoomHeadList;

@@ -21,7 +21,7 @@ public class Tileset {//这里需要切图上传一个大图然后拿到对象放到数组
     }
 
     private void split(String pngName) {
-        URL url = Tileset.class.getClassLoader().getResource(pngName);
+        URL url = this.getClass().getResource(pngName);
         BufferedImage tilesetImage = null;
         try {
             tilesetImage = ImageIO.read(url);

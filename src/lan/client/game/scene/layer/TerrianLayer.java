@@ -18,9 +18,8 @@ public class TerrianLayer extends Layer {
     }
 
     public void load() {
-        MapParser mapParser = new MapParser("resources/map/map1.json");
+        MapParser mapParser = new MapParser("/resources/map/map1.json");
         images = mapParser.parse();
-        System.out.print(images.length);
     }
 
     @Override

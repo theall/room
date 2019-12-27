@@ -1,7 +1,6 @@
+call build_game.bat
 call build_client.bat
-call build_server.bat
+rem call build_server.bat
 
-cd target
-copy Client-0.jar ..\client.jar
-copy Server-0.jar ..\server.jar
-cd ../
+copy target\Client-0.jar .\client.jar
+rem copy Server-0.jar .\server.jar

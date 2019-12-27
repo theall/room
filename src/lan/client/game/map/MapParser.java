@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSON;
 
 import java.awt.*;
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 public class MapParser {//地图解析
     private String jsonFile;
@@ -14,7 +12,7 @@ public class MapParser {//地图解析
         jsonFile = jsonName;
     }
 
-    public Image[][] parse() {//解析json文件
+    public Image[][] parse() {
         String jsonStr = readJsonData(jsonFile);
         Map map = JSON.parseObject(jsonStr, Map.class);
         String imageName = map.getImage();
@@ -24,7 +22,7 @@ public class MapParser {//地图解析
 
         int rows = map.getRows();
         int cols = map.getCols();
-        Image[][] images = new Image[rows][];//转换数组
+        Image[][] images = new Image[rows][];
         int[] data = map.getData();
         for(int i=0;i<rows;i++) {
             images[i] = new Image[cols];
@@ -52,18 +50,13 @@ public class MapParser {//地图解析
 
     public String readJsonData(String pactFile) {
         StringBuffer strbuffer = new StringBuffer();
-        URL fileUrl = MapParser.class.getClassLoader().getResource(pactFile);
-        if(fileUrl == null) {
-            fileUrl = this.getClass().getClassLoader().getResource(pactFile);
-            if(fileUrl == null) {
-                System.out.println("File is not found " + pactFile);
-                return "";
-            }
+        InputStream inputStream = this.getClass().getResourceAsStream(pactFile);
+        if(inputStream == null) {
+            System.out.println("File is not found " + pactFile);
+            return "";
         }
         try {
-            File file = new File(fileUrl.toURI());
-            FileInputStream fileInputStream = new FileInputStream(file);
-            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader in  = new BufferedReader(inputStreamReader);
 
             String str;
@@ -73,8 +66,6 @@ public class MapParser {//地图解析
             in.close();
         } catch (IOException e) {
             e.getStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         }
 
         return strbuffer.toString();

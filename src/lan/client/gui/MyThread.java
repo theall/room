@@ -1,9 +1,6 @@
-package lan.client.game;
+package lan.client.gui;
 
-import lan.client.gui.widget.list.IconText;
-import lan.client.gui.widget.list.ImageListModel;
-
-import javax.swing.*;
+import lan.client.game.Game;
 
 public class MyThread extends Thread {
 	private Game game;

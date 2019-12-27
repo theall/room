@@ -5,3 +5,4 @@ pom.xml
 *.jar
 /META-INF
 /.idea/workspace.xml
+.idea
