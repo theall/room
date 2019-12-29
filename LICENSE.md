@@ -1,4 +1,4 @@
-The source code to LevelEditor is provided under the GNU General Public License version 2.
+The source code to Room is provided under the GNU General Public License version 2.
 
 The text of version 2 of the GNU General Public License follows.
 

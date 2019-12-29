@@ -10,6 +10,8 @@ deploy:
   auth_token:
     secure: crzVFlTyFurgbVImysXO1iQMlguXxkrJHgHoK0M9nkf5d2dboy1bGS4OwENIPT69
   artifact: /.+\.jar/
+  on:
+    appveyor_repo_tag: true
 notifications:
 - provider: Email
   to:
