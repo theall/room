@@ -10,6 +10,7 @@ import lan.utils.Utils;
 public class FindHostThread extends Thread { //寻找房间线程
 	private RoomHeadList roomHeadList;
 	private RoomUpdateThread roomUpdateThread;
+	private TickThread tickThread;
 	
 	public FindHostThread() {
 		roomHeadList = new RoomHeadList();
@@ -66,11 +67,18 @@ public class FindHostThread extends Thread { //寻找房间线程
 				roomHeadInfo.current = Integer.parseInt(strings[4]);
 				roomHeadInfo.capacity = Integer.parseInt(strings[5]);
 				roomHeadInfo.timestamp = System.currentTimeMillis();
+				pingDetection(roomHeadInfo);
 				roomHeadList.add(roomHeadInfo);
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
+	}
+	
+	public void pingDetection(RoomHeadInfo roomHeadInfo) {
+		tickThread = new TickThread();
+		tickThread.setIpAddress(roomHeadInfo);
+		tickThread.start();
 	}
 
 	public void setRoomUpdate(RoomUpdate roomUpdate) {
