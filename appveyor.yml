@@ -16,9 +16,6 @@ notifications:
 - provider: Email
   to:
   - wazcd_1608@qq.com
-  - 850781307@qq.com
-  - 2308574548@qq.com
-  - 957154990@qq.com
   subject: Build status of Room
   on_build_success: true
   on_build_failure: true

@@ -28,7 +28,7 @@ public class TickThread extends Thread { //¼ì²âÍæ¼ÒÑÓ³ÙÏß³Ì
 				if(trueOrFalse == true) {
 					long timeTwo = System.currentTimeMillis();
 					roomHeadInfo.ping = (int)(timeTwo - timeOne)/2;
-					System.out.println(roomHeadInfo.name + "ping="+ ((timeTwo - timeOne)/2));
+					//System.out.println(roomHeadInfo.name + "ping=" + ((timeTwo - timeOne)/2) + "ms");
 					sleep(1000);
 				}else{
 					exit = true;

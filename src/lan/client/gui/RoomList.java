@@ -79,7 +79,7 @@ public class RoomList extends JFrame implements RoomUpdate, ActionListener, Mous
         //向量//字符串//房间名称=创建对象//
         Vector<String> roomNames = new Vector<String>();//这里是接口
         for (RoomHeadInfo roomHeadInfo : roomHeadList.getRoomHeadInfo()) {
-            roomNames.add(roomHeadInfo.name + "(ping:" + roomHeadInfo.ping + ")");
+            roomNames.add(roomHeadInfo.name + "(" + roomHeadInfo.ping + "ms)");
         }
         listRooms.setListData(roomNames); //数据列表
     }
